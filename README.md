@@ -1,2 +1,2 @@
 # EnhancedDIAttempt
-trying out various supposedly good TI techniques
+trying out various supposedly good DI techniques
