@@ -3,7 +3,7 @@ using Zenject;
 
 namespace EnhancedDIAttempt.PlayerActions
 {
-    public class PlayerMovement : MonoBehaviour
+    public class PlayerActions : MonoBehaviour
     {
         [Inject]
         private void Construct(IController controller)

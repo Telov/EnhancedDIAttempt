@@ -9394,10 +9394,9 @@ MonoBehaviour:
   animator: {fileID: 95346455519873398}
   animatorGroundedBoolName: Grounded
   attackCollider: {fileID: 1526267017}
-  continuousAttackInfo:
-    attackDamage: 15
-    attackCooldown: 0.3
-    attackDuration: 1000
+  attackCooldown: 3
+  maxAttackDuration: 5
+  attackDamage: 5
   animatorAttackingBoolName: Attacking
 --- !u!114 &797879278
 MonoBehaviour:

@@ -1,22 +1,20 @@
-using UnityEngine;
+using EnhancedDIAttempt.Utils.MecanimStateMachine;
 
 namespace EnhancedDIAttempt.AnimationInteraction
 {
     public class AnimatorBoolChangerStateDecorator : IState
     {
-        public AnimatorBoolChangerStateDecorator(IState state, Animator animator, int boolId, bool reversedInteractionWithTheBool)
+        public AnimatorBoolChangerStateDecorator(IState state, IAnimatorBoolSetter animatorBoolSetter, bool reversedInteractionWithTheBool)
         {
             _state = state;
-            _animator = animator;
-            _boolId = boolId;
+            _animatorBoolSetter = animatorBoolSetter;
             _reversedInteractionWithTheBool = reversedInteractionWithTheBool;
         }
 
         private readonly IState _state;
-        private readonly Animator _animator;
-        private readonly int _boolId;
-        private readonly bool _reversedInteractionWithTheBool; 
-        
+        private readonly IAnimatorBoolSetter _animatorBoolSetter;
+        private readonly bool _reversedInteractionWithTheBool;
+
         public bool IsSuitedToBeAppliedNow()
         {
             return _state.IsSuitedToBeAppliedNow();
@@ -25,13 +23,15 @@ namespace EnhancedDIAttempt.AnimationInteraction
         public void Activate(StateMachine.StateMachine.CallbackContext callbackContext)
         {
             _state.Activate(callbackContext);
-            _animator.SetBool(_boolId, true && !_reversedInteractionWithTheBool);
+            if (_reversedInteractionWithTheBool) _animatorBoolSetter.SetBoolToFalse();
+            else _animatorBoolSetter.SetBoolToTrue();
         }
 
         public void Deactivate()
         {
             _state.Deactivate();
-            _animator.SetBool(_boolId, false || _reversedInteractionWithTheBool);
+            if (_reversedInteractionWithTheBool) _animatorBoolSetter.SetBoolToTrue();
+            else _animatorBoolSetter.SetBoolToFalse();
         }
     }
 }

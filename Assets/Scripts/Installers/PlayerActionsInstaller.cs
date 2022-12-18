@@ -5,12 +5,13 @@ using EnhancedDIAttempt.PlayerActions.StateMachine;
 using EnhancedDIAttempt.PlayerActions.StateMachine.States;
 using EnhancedDIAttempt.PlayerActions.StateMachine.States.Actions;
 using EnhancedDIAttempt.StateMachine;
+using EnhancedDIAttempt.Utils.MecanimStateMachine;
 using UnityEngine;
 using Zenject;
 
 namespace EnhancedDIAttempt.Installers
 {
-    public class PlayerMovementInstaller : MonoInstaller
+    public class PlayerActionsInstaller : MonoInstaller
     {
         [SerializeField] private Transform playerTransform;
         [SerializeField] private Rigidbody2D rb;
@@ -20,11 +21,15 @@ namespace EnhancedDIAttempt.Installers
         [SerializeField] private JumpAction.JumpSettings jumpSettings;
         [SerializeField] private Animator animator;
         [SerializeField] private string animatorGroundedBoolName;
-        [Header("AttackAction")]
-        [SerializeField] private Collider2D attackCollider;
-        [SerializeField] private ContinuousAttackAction.ContinuousAttackInfo continuousAttackInfo;
+
+        [Header("AttackAction")] [SerializeField]
+        private Collider2D attackCollider;
+
+        [SerializeField] private float attackCooldown;
+        [SerializeField] private float maxAttackDuration;
+        [SerializeField] private float attackDamage;
         [SerializeField] private string animatorAttackingBoolName;
-        
+
         [Inject] private IUpdatesController _updatesController;
 
         public override void InstallBindings()
@@ -62,22 +67,35 @@ namespace EnhancedDIAttempt.Installers
                     _updatesController,
                     inputActions.Movement
                 );
-            
+
             IBehaviour moveAction =
                 new MoveAction(movementSettings, moveActionData);
-            
+
             IBehaviour jumpAction =
                 new JumpAction(jumpSettings, playerInfoProvider, playerInfoProvider, inputActions.Jump);
 
+
+            var toggleableAttackAllower = new ToggleableAttackAllowerDecorator(new BaseAttackAllower(maxAttackDuration));
             IBehaviour attackAction =
-                new ContinuousAttackActionWithAnimation(
-                    inputActions.Attack,
+                new AttackAction
+                (
                     new AttackTargetsOverlappingColliderProvider(attackCollider),
-                    continuousAttackInfo,
-                    animator.GetBehaviour<AttackStateMachineBehaviour>(),
-                    animator,
-                    Animator.StringToHash(animatorAttackingBoolName));
-            
+                    new SimpleCooldownController(attackCooldown),
+                    new ContinuousAttackDependantOnAnimationDecorator
+                    (
+                        new ContinuousDamageDealerDecorator
+                        (
+                            new SimpleDamageDealer(),
+                            toggleableAttackAllower
+                        ),
+                        toggleableAttackAllower,
+                        animator.GetBehaviour<AnimatorAttackStateExitedNotifier>(),
+                        new AnimatorBoolSetter(animator, Animator.StringToHash(animatorAttackingBoolName))
+                    ),
+                    inputActions.Attack,
+                    attackDamage
+                );
+
             List<IBehaviour> onGroundStateBehaviours =
                 new List<IBehaviour>
                 {
@@ -95,8 +113,7 @@ namespace EnhancedDIAttempt.Installers
                         groundChecker,
                         _updatesController
                     ),
-                    animator,
-                    animatorGroundedBoolId,
+                    new AnimatorBoolSetter(animator, animatorGroundedBoolId), 
                     false
                 );
 
@@ -115,8 +132,7 @@ namespace EnhancedDIAttempt.Installers
                         groundChecker,
                         _updatesController
                     ),
-                    animator,
-                    animatorGroundedBoolId,
+                    new AnimatorBoolSetter(animator, animatorGroundedBoolId),
                     true
                 );
 
