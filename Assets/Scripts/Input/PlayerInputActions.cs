@@ -37,7 +37,7 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""AccelerateMovement"",
+                    ""name"": ""Run"",
                     ""type"": ""Button"",
                     ""id"": ""54aae7fa-50f8-4e34-98cf-a3bb084e730f"",
                     ""expectedControlType"": ""Button"",
@@ -160,7 +160,7 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""AccelerateMovement"",
+                    ""action"": ""Run"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -172,7 +172,7 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
         // PlayerActionMap
         m_PlayerActionMap = asset.FindActionMap("PlayerActionMap", throwIfNotFound: true);
         m_PlayerActionMap_Movement = m_PlayerActionMap.FindAction("Movement", throwIfNotFound: true);
-        m_PlayerActionMap_AccelerateMovement = m_PlayerActionMap.FindAction("AccelerateMovement", throwIfNotFound: true);
+        m_PlayerActionMap_Run = m_PlayerActionMap.FindAction("Run", throwIfNotFound: true);
         m_PlayerActionMap_Attack = m_PlayerActionMap.FindAction("Attack", throwIfNotFound: true);
         m_PlayerActionMap_Jump = m_PlayerActionMap.FindAction("Jump", throwIfNotFound: true);
     }
@@ -235,7 +235,7 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
     private readonly InputActionMap m_PlayerActionMap;
     private IPlayerActionMapActions m_PlayerActionMapActionsCallbackInterface;
     private readonly InputAction m_PlayerActionMap_Movement;
-    private readonly InputAction m_PlayerActionMap_AccelerateMovement;
+    private readonly InputAction m_PlayerActionMap_Run;
     private readonly InputAction m_PlayerActionMap_Attack;
     private readonly InputAction m_PlayerActionMap_Jump;
     public struct PlayerActionMapActions
@@ -243,7 +243,7 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
         private @PlayerInputActions m_Wrapper;
         public PlayerActionMapActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Movement => m_Wrapper.m_PlayerActionMap_Movement;
-        public InputAction @AccelerateMovement => m_Wrapper.m_PlayerActionMap_AccelerateMovement;
+        public InputAction @Run => m_Wrapper.m_PlayerActionMap_Run;
         public InputAction @Attack => m_Wrapper.m_PlayerActionMap_Attack;
         public InputAction @Jump => m_Wrapper.m_PlayerActionMap_Jump;
         public InputActionMap Get() { return m_Wrapper.m_PlayerActionMap; }
@@ -258,9 +258,9 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                 @Movement.started -= m_Wrapper.m_PlayerActionMapActionsCallbackInterface.OnMovement;
                 @Movement.performed -= m_Wrapper.m_PlayerActionMapActionsCallbackInterface.OnMovement;
                 @Movement.canceled -= m_Wrapper.m_PlayerActionMapActionsCallbackInterface.OnMovement;
-                @AccelerateMovement.started -= m_Wrapper.m_PlayerActionMapActionsCallbackInterface.OnAccelerateMovement;
-                @AccelerateMovement.performed -= m_Wrapper.m_PlayerActionMapActionsCallbackInterface.OnAccelerateMovement;
-                @AccelerateMovement.canceled -= m_Wrapper.m_PlayerActionMapActionsCallbackInterface.OnAccelerateMovement;
+                @Run.started -= m_Wrapper.m_PlayerActionMapActionsCallbackInterface.OnRun;
+                @Run.performed -= m_Wrapper.m_PlayerActionMapActionsCallbackInterface.OnRun;
+                @Run.canceled -= m_Wrapper.m_PlayerActionMapActionsCallbackInterface.OnRun;
                 @Attack.started -= m_Wrapper.m_PlayerActionMapActionsCallbackInterface.OnAttack;
                 @Attack.performed -= m_Wrapper.m_PlayerActionMapActionsCallbackInterface.OnAttack;
                 @Attack.canceled -= m_Wrapper.m_PlayerActionMapActionsCallbackInterface.OnAttack;
@@ -274,9 +274,9 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
                 @Movement.started += instance.OnMovement;
                 @Movement.performed += instance.OnMovement;
                 @Movement.canceled += instance.OnMovement;
-                @AccelerateMovement.started += instance.OnAccelerateMovement;
-                @AccelerateMovement.performed += instance.OnAccelerateMovement;
-                @AccelerateMovement.canceled += instance.OnAccelerateMovement;
+                @Run.started += instance.OnRun;
+                @Run.performed += instance.OnRun;
+                @Run.canceled += instance.OnRun;
                 @Attack.started += instance.OnAttack;
                 @Attack.performed += instance.OnAttack;
                 @Attack.canceled += instance.OnAttack;
@@ -290,7 +290,7 @@ public partial class @PlayerInputActions : IInputActionCollection2, IDisposable
     public interface IPlayerActionMapActions
     {
         void OnMovement(InputAction.CallbackContext context);
-        void OnAccelerateMovement(InputAction.CallbackContext context);
+        void OnRun(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
     }

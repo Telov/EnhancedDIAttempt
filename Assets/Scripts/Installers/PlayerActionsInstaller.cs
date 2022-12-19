@@ -17,7 +17,9 @@ namespace EnhancedDIAttempt.Installers
         [SerializeField] private Rigidbody2D rb;
         [SerializeField] private Collider2D playerCollider;
         [SerializeField] private LayerMask whatIsGround;
-        [SerializeField] private MoveAction.MovementSettings movementSettings;
+        [SerializeField] private float onGroundHorizontalSlowdownCoef;
+        [SerializeField] private HorizontalMoveAction.MovementSettings movementSettings;
+        [SerializeField] private float runSpeedMultiplier;
         [SerializeField] private JumpAction.JumpSettings jumpSettings;
         [SerializeField] private Animator animator;
         [SerializeField] private string animatorGroundedBoolName;
@@ -62,14 +64,18 @@ namespace EnhancedDIAttempt.Installers
             MoveActionData moveActionData =
                 new MoveActionData
                 (
-                    playerInfoProvider,
-                    groundChecker,
                     _updatesController,
+                    new ForceMultipOnRunRb2DMoverDecorator
+                    (
+                        new Rb2DMover(rb),
+                        inputActions.Run,
+                        runSpeedMultiplier
+                    ),
                     inputActions.Movement
                 );
 
             IBehaviour moveAction =
-                new MoveAction(movementSettings, moveActionData);
+                new HorizontalMoveAction(movementSettings, moveActionData);
 
             IBehaviour jumpAction =
                 new JumpAction(jumpSettings, playerInfoProvider, playerInfoProvider, inputActions.Jump);
@@ -111,9 +117,11 @@ namespace EnhancedDIAttempt.Installers
                     (
                         new StateBase(onGroundStateBehaviours),
                         groundChecker,
-                        _updatesController
+                        _updatesController,
+                        rb,
+                        onGroundHorizontalSlowdownCoef
                     ),
-                    new AnimatorBoolSetter(animator, animatorGroundedBoolId), 
+                    new AnimatorBoolSetter(animator, animatorGroundedBoolId),
                     false
                 );
 

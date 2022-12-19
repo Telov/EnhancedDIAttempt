@@ -3,26 +3,24 @@ using UnityEngine.InputSystem;
 
 namespace EnhancedDIAttempt.PlayerActions.StateMachine.States.Actions
 {
-    public class MoveAction : IBehaviour
+    public class HorizontalMoveAction : IBehaviour
     {
-        public MoveAction
+        public HorizontalMoveAction
         (
             MovementSettings movementSettings,
             MoveActionData data
         )
         {
             _movementSettings = movementSettings;
-            _rb = data.PlayerRbProvider.GetRb();
-            _groundChecker = data.GroundChecker;
             _updatesController = data.UpdatesController;
             _moveAction = data.MoveAction;
+            _rb2DMover = data.Rb2DMover;
         }
 
         private readonly MovementSettings _movementSettings;
-        private readonly Rigidbody2D _rb;
-        private readonly IGroundChecker _groundChecker;
         private readonly IUpdatesController _updatesController;
         private readonly InputAction _moveAction;
+        private readonly IRb2DMover _rb2DMover;
 
         private bool _started;
 
@@ -45,7 +43,6 @@ namespace EnhancedDIAttempt.PlayerActions.StateMachine.States.Actions
             if (!_started)
             {
                 _started = true;
-                _updatesController.AddUpdateCallback(OnUpdate);
                 _updatesController.AddFixedUpdateCallback(OnFixedUpdate);
             }
         }
@@ -53,47 +50,18 @@ namespace EnhancedDIAttempt.PlayerActions.StateMachine.States.Actions
         private void StopWorking(InputAction.CallbackContext ctx)
         {
             _started = false;
-            _updatesController.RemoveUpdateCallback(OnUpdate);
             _updatesController.RemoveFixedUpdateCallback(OnFixedUpdate);
-        }
-
-        private void OnUpdate()
-        {
-            LimitHorizontalSpeed(_movementSettings.WalkSpeed);
-
-            // handle drag
-            _rb.drag = _groundChecker.IsPlayerGrounded() ? _movementSettings.GroundDrag : 0;
         }
 
         private void OnFixedUpdate()
         {
-            MovePlayer();
-        }
-
-        private void LimitHorizontalSpeed(float limit)
-        {
-            var velocity = _rb.velocity;
-
-            if (Mathf.Abs(velocity.x) > limit)
-            {
-                _rb.velocity = new Vector2(Mathf.Clamp(velocity.x, -limit, limit), velocity.y);
-            }
-        }
-
-
-        private void MovePlayer()
-        {
-            float moveInput = _moveAction.ReadValue<float>();
-
-            Vector3 force = Vector2.right * moveInput * _movementSettings.WalkSpeed * 10f;
-            _rb.AddForce(force, ForceMode2D.Force);
+            _rb2DMover.Move(_moveAction.ReadValue<float>() * _movementSettings.WalkSpeed, Vector3.right);
         }
 
         [System.Serializable]
         public class MovementSettings
         {
             public float WalkSpeed;
-            public float GroundDrag;
         }
     }
 }

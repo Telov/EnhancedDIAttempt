@@ -15,7 +15,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "AccelerateMovement",
+                    "name": "Run",
                     "type": "Button",
                     "id": "54aae7fa-50f8-4e34-98cf-a3bb084e730f",
                     "expectedControlType": "Button",
@@ -138,7 +138,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "AccelerateMovement",
+                    "action": "Run",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

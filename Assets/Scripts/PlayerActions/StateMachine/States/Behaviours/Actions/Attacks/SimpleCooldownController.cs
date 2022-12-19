@@ -11,7 +11,7 @@ namespace EnhancedDIAttempt.PlayerActions.StateMachine.States.Actions
 
         private readonly float _cooldown;
 
-        private float _timeSinceCooldownStarted;
+        private float _timeSinceCooldownStarted = float.MinValue;
 
         public void StartCooldown()
         {
