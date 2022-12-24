@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using EnhancedDIAttempt.AnimationInteraction;
-using EnhancedDIAttempt.PlayerActions;
-using EnhancedDIAttempt.PlayerActions.StateMachine;
-using EnhancedDIAttempt.PlayerActions.StateMachine.States;
-using EnhancedDIAttempt.PlayerActions.StateMachine.States.Actions;
+using EnhancedDIAttempt.ActiveBehaviours;
+using EnhancedDIAttempt.ActiveBehaviours.StateMachine.States;
+using EnhancedDIAttempt.ActiveBehaviours.StateMachine.States.Actions;
+using EnhancedDIAttempt.AnimationInteraction.MoveAction;
 using EnhancedDIAttempt.StateMachine;
 using EnhancedDIAttempt.Utils.MecanimStateMachine;
 using UnityEngine;
@@ -18,7 +18,7 @@ namespace EnhancedDIAttempt.Installers
         [SerializeField] private Collider2D playerCollider;
         [SerializeField] private LayerMask whatIsGround;
         [SerializeField] private float onGroundHorizontalSlowdownCoef;
-        [SerializeField] private HorizontalMoveAction.MovementSettings movementSettings;
+        [SerializeField] private MoveAction.MovementSettings movementSettings;
         [SerializeField] private float runSpeedMultiplier;
         [SerializeField] private JumpAction.JumpSettings jumpSettings;
         [SerializeField] private Animator animator;
@@ -61,6 +61,30 @@ namespace EnhancedDIAttempt.Installers
 
             #region OnGroundState
 
+            var toggleableAttackAllower = new ToggleableAttackAllowerDecorator(new BaseAttackAllower(maxAttackDuration));
+
+            var AttackAnimatorStateInfoProvider = animator.GetBehaviour<AnimatorAttackStateExitedNotifier>();
+
+            IBehaviour attackAction =
+                new AttackAction
+                (
+                    new AttackTargetsOverlappingColliderProvider(attackCollider),
+                    new SimpleCooldownController(attackCooldown),
+                    new DependantOnAnimationContinuousDamageDealerDecorator
+                    (
+                        new ContinuousDamageDealerDecorator
+                        (
+                            new SimpleDamageDealer(),
+                            toggleableAttackAllower
+                        ),
+                        toggleableAttackAllower,
+                        AttackAnimatorStateInfoProvider,
+                        new AnimatorBoolSetter(animator, Animator.StringToHash(animatorAttackingBoolName))
+                    ),
+                    inputActions.Attack,
+                    attackDamage
+                );
+
             MoveActionData moveActionData =
                 new MoveActionData
                 (
@@ -71,36 +95,20 @@ namespace EnhancedDIAttempt.Installers
                         inputActions.Run,
                         runSpeedMultiplier
                     ),
+                    new AnimationDependantMoveAllowerDecorator
+                    (
+                        new SimpleMoveAllower(),
+                        AttackAnimatorStateInfoProvider
+                    ),
                     inputActions.Movement
                 );
 
             IBehaviour moveAction =
-                new HorizontalMoveAction(movementSettings, moveActionData);
+                new MoveAction(movementSettings, moveActionData);
 
             IBehaviour jumpAction =
                 new JumpAction(jumpSettings, playerInfoProvider, playerInfoProvider, inputActions.Jump);
 
-
-            var toggleableAttackAllower = new ToggleableAttackAllowerDecorator(new BaseAttackAllower(maxAttackDuration));
-            IBehaviour attackAction =
-                new AttackAction
-                (
-                    new AttackTargetsOverlappingColliderProvider(attackCollider),
-                    new SimpleCooldownController(attackCooldown),
-                    new ContinuousAttackDependantOnAnimationDecorator
-                    (
-                        new ContinuousDamageDealerDecorator
-                        (
-                            new SimpleDamageDealer(),
-                            toggleableAttackAllower
-                        ),
-                        toggleableAttackAllower,
-                        animator.GetBehaviour<AnimatorAttackStateExitedNotifier>(),
-                        new AnimatorBoolSetter(animator, Animator.StringToHash(animatorAttackingBoolName))
-                    ),
-                    inputActions.Attack,
-                    attackDamage
-                );
 
             List<IBehaviour> onGroundStateBehaviours =
                 new List<IBehaviour>
@@ -147,10 +155,10 @@ namespace EnhancedDIAttempt.Installers
             #endregion
 
             ISpareStatesProvider spareStatesProvider =
-                new MovementConfigurator(onGroundState, inAirState);
+                new ActiveBehaviours.StateMachine.ActiveBehaviours(onGroundState, inAirState);
 
-            MovementStateMachine stateMachine =
-                new MovementStateMachine(spareStatesProvider);
+            ActiveBehavioursStateMachine stateMachine =
+                new ActiveBehavioursStateMachine(spareStatesProvider);
 
             Container.Bind<IController>().FromInstance(stateMachine);
         }
