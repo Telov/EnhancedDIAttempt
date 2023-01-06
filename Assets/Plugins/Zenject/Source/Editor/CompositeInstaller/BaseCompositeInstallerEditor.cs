@@ -87,7 +87,7 @@ namespace Zenject.CompositeInstaller
         protected virtual InstallerPropertyInfo PropertyInfo => new InstallerPropertyInfo
         {
             name = "_leafInstallers",
-            displayName = "Leaf Scriptable Object Installers",
+            displayName = "MonoInstallers",
             description = "Drag any assets in your Project that implement ScriptableObjectInstaller here",
         };
     }

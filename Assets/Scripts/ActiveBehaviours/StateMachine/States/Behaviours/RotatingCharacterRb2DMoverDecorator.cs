@@ -15,7 +15,7 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.States
 
         public void Move(float speedMultiplier, Vector3 direction)
         {
-            _transform.RotateAround(Vector3.up, direction.x > 0? 0f : 180f);
+            _transform.Rotate(Vector3.up, direction.x > 0? 0f : 180f);
             _rb2DMover.Move(speedMultiplier, direction);
         }
     }

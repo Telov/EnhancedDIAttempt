@@ -13,7 +13,7 @@ namespace EnhancedDIAttempt.Installers
         [Inject] private IUpdatesController _updatesController;
         [Inject] private CommonActionsInstaller _commonActionsInstaller;
 
-        public override void InstallBindings()
+        public override void DecorateProperties()
         {
             _commonActionsInstaller.OnGroundStateBehaviours.Decorate
             (x =>

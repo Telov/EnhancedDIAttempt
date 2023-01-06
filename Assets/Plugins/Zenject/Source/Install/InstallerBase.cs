@@ -15,6 +15,8 @@ namespace Zenject
             get { return true; }
         }
 
+        public virtual void DecorateProperties(){}
+
         public abstract void InstallBindings();
     }
 }

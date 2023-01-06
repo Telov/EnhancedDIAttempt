@@ -22,6 +22,10 @@ namespace Zenject
             get { return true; }
         }
 
+        public virtual void DecorateProperties()
+        {
+        }
+
         public virtual void InstallBindings()
         {
             throw new NotImplementedException();

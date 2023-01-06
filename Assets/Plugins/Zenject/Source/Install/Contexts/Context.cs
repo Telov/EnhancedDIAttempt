@@ -200,7 +200,7 @@ namespace Zenject
                     installer.InstallBindings();
                 }
             }
-
+            
             foreach (var installer in allInstallers)
             {
                 Assert.IsNotNull(installer,
@@ -208,6 +208,16 @@ namespace Zenject
 
                 Container.Inject(installer);
 
+#if ZEN_INTERNAL_PROFILING
+                using (ProfileTimers.CreateTimedBlock("User Code"))
+#endif
+                {
+                    installer.DecorateProperties();
+                }
+            }
+
+            foreach (var installer in allInstallers)
+            {
 #if ZEN_INTERNAL_PROFILING
                 using (ProfileTimers.CreateTimedBlock("User Code"))
 #endif
