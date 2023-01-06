@@ -4,7 +4,7 @@ namespace EnhancedDIAttempt.ActiveBehaviours
 {
     public class ActiveBehavioursStateMachine : EnhancedDIAttempt.StateMachine.StateMachine, IController
     {
-        public ActiveBehavioursStateMachine(ISpareStatesProvider spareStatesProvider) : base(spareStatesProvider)
+        public ActiveBehavioursStateMachine(IStatesProvider statesProvider) : base(statesProvider)
         {
         }
 

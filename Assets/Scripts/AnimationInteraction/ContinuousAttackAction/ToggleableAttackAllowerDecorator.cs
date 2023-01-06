@@ -1,4 +1,4 @@
-using EnhancedDIAttempt.ActiveBehaviours.StateMachine.States.Actions;
+using EnhancedDIAttempt.ActiveBehaviours.StateMachine.States.InputBasedActions;
 
 namespace EnhancedDIAttempt.AnimationInteraction
 {

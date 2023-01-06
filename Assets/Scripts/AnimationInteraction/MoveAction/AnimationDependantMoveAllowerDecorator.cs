@@ -1,4 +1,4 @@
-using EnhancedDIAttempt.ActiveBehaviours.StateMachine.States.Actions;
+using EnhancedDIAttempt.ActiveBehaviours.StateMachine.States.InputBasedActions;
 using EnhancedDIAttempt.Utils.MecanimStateMachine;
 
 namespace EnhancedDIAttempt.AnimationInteraction.MoveAction

@@ -30,10 +30,7 @@ namespace Zenject
 
         bool _hasInstalled;
 
-        public override DiContainer Container
-        {
-            get { return _container; }
-        }
+        public override DiContainer Container => _container;
 
         public override IEnumerable<GameObject> GetRootGameObjects()
         {
@@ -183,8 +180,13 @@ namespace Zenject
         {
             _container.DefaultParent = transform;
 
-            _container.Bind<Context>().FromInstance(this);
-            _container.Bind<GameObjectContext>().FromInstance(this);
+            _container.Bind(typeof(Context), typeof(GameObjectContext)).FromInstance(this);
+
+            foreach (var installer in Installers)
+            {
+                
+                _container.Bind(installer.GetType()).FromInstance(installer);
+            }
 
             if (_kernel == null)
             {

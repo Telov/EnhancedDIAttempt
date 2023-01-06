@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using ModestTree;
 using UnityEngine;
-using UnityEngine.Serialization;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -16,9 +15,7 @@ namespace Zenject
     {
         [SerializeField]
         List<ScriptableObjectInstaller> _scriptableObjectInstallers = new List<ScriptableObjectInstaller>();
-
-        [FormerlySerializedAs("Installers")]
-        [FormerlySerializedAs("_installers")]
+        
         [SerializeField]
         List<MonoInstaller> _monoInstallers = new List<MonoInstaller>();
 

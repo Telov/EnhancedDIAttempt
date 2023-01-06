@@ -5,24 +5,24 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.States
     public class GroundChecker : IGroundChecker
     {
         public GroundChecker(
-            IPlayerHeightProvider playerHeightProvider,
+            IActorHeightProvider actorHeightProvider,
             LayerMask whatIsGround,
-            IPlayerCenterProvider playerCenterProvider)
+            IActorCenterProvider actorCenterProvider)
         {
-            _playerHeightProvider = playerHeightProvider;
+            _actorHeightProvider = actorHeightProvider;
             _whatIsGround = whatIsGround;
-            _playerCenterProvider = playerCenterProvider;
+            _actorCenterProvider = actorCenterProvider;
         }
 
-        private readonly IPlayerHeightProvider _playerHeightProvider;
+        private readonly IActorHeightProvider _actorHeightProvider;
         private readonly LayerMask _whatIsGround;
-        private readonly IPlayerCenterProvider _playerCenterProvider;
+        private readonly IActorCenterProvider _actorCenterProvider;
 
         public bool Grounded =>
             Physics2D.Raycast(
-                _playerCenterProvider.GetCenter(),
+                _actorCenterProvider.GetCenter(),
                 Vector3.down,
-                _playerHeightProvider.GetHeight() * 0.5f + 0.05f,
+                _actorHeightProvider.GetHeight() * 0.5f + 0.05f,
                 _whatIsGround);
     }
 }

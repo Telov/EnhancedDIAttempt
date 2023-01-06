@@ -4,9 +4,9 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.States
 {
     public class StateBase : IState
     {
-        public StateBase(List<IBehaviour> behaviours)
+        public StateBase(IBehavioursProvider behavioursProvider)
         {
-            _behaviours = behaviours;
+            _behaviours = behavioursProvider.GetBehaviours();
         }
     
         private readonly List<IBehaviour> _behaviours;

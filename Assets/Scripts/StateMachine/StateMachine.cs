@@ -4,9 +4,9 @@ namespace EnhancedDIAttempt.StateMachine
 {
     public class StateMachine
     {
-        public StateMachine(ISpareStatesProvider spareStatesProvider)
+        public StateMachine(IStatesProvider statesProvider)
         {
-            SpareStates = spareStatesProvider.GetSpareStates();
+            SpareStates = statesProvider.GetStates();
         }
 
         protected readonly List<IState> SpareStates; //states which you try to revert to when null state is specified 
