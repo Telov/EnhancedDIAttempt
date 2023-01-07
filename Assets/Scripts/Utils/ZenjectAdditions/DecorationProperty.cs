@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace EnhancedDIAttempt.Utils.ZenjectAdditions
 {
@@ -11,21 +10,19 @@ namespace EnhancedDIAttempt.Utils.ZenjectAdditions
         }
 
         private readonly List<Func<T, T>> _decorators = new();
-
         private T _value;
-        private bool _decorated = false;
         private T _finalValue;
 
         public void Decorate(Func<T, T> decorator)
         {
             _decorators.Add(decorator);
-            _decorated = false;
+            decorated = false;
         }
 
         public void Set(T value)
         {
             _value = value;
-            _decorated = false;
+            decorated = false;
         }
         
         public T FinalValue
@@ -34,18 +31,33 @@ namespace EnhancedDIAttempt.Utils.ZenjectAdditions
             {
                 if (_value == null) throw new Exception("No value to DecorationProperty");
 
-                if (!_decorated)
+                if (!decorated)
                 {
                     _finalValue = _value;
-                    foreach (var funcDecorator in Enumerable.Reverse(_decorators))
+                    foreach (var funcDecorator in _decorators)
                     {
                         _finalValue = funcDecorator(_finalValue);
                     }
 
-                    _decorated = true;
+                    decorated = true;
                 }
 
                 return _finalValue;
+            }
+        }
+
+        private bool _decorated = false;
+        private bool decorated
+        {
+            get => _decorated;
+            set
+            {
+                if (decorated && !value)
+                {
+                    throw new Exception("DecorationProperty changed after someone already used the final value!");
+                }
+
+                _decorated = value;
             }
         }
     }
