@@ -1,9 +1,10 @@
+using System;
 using EnhancedDIAttempt.ActiveBehaviours.StateMachine.States.InputBasedActions;
 using EnhancedDIAttempt.Utils.MecanimStateMachine;
 
 namespace EnhancedDIAttempt.AnimationInteraction
 {
-    public class DependantOnAnimationContinuousDamageDealerDecorator :  IDamageDealer
+    public class DependantOnAnimationContinuousDamageDealerDecorator :  IContinuousDamageDealer
     {
         public DependantOnAnimationContinuousDamageDealerDecorator
         (
@@ -24,10 +25,16 @@ namespace EnhancedDIAttempt.AnimationInteraction
         private readonly IMecanimStateExitedNotifier _stateExitedNotifier;
         private readonly IAnimatorBoolSetter _animatorBoolSetter;
 
+        public event Action OnAttackStarted;
+        public event Action OnAttackEnded;
+        
         public void DealDamage(IAttackTargetsProvider targetsProvider, float amount)
         {
             _continuousDamageDealer.OnAttackStarted += StartWorking;
+            _continuousDamageDealer.OnAttackStarted += OnAttackStarted;
             _continuousDamageDealer.OnAttackEnded += StopWorking;
+            _continuousDamageDealer.OnAttackEnded += OnAttackEnded;
+            
             _continuousDamageDealer.DealDamage(targetsProvider, amount);
         }
 
@@ -46,7 +53,9 @@ namespace EnhancedDIAttempt.AnimationInteraction
             _animatorBoolSetter.SetBoolToFalse();
             
             _continuousDamageDealer.OnAttackStarted -= StartWorking;
+            _continuousDamageDealer.OnAttackStarted -= OnAttackStarted;
             _continuousDamageDealer.OnAttackEnded -= StopWorking;
+            _continuousDamageDealer.OnAttackEnded -= OnAttackEnded;
         }
     }
 }

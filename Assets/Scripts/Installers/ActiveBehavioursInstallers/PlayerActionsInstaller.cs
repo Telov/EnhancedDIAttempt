@@ -12,6 +12,7 @@ namespace EnhancedDIAttempt.Installers
     {
         [SerializeField] private MoveAction.MovementSettings movementSettings;
         [SerializeField] private float runSpeedMultiplier;
+        [SerializeField] private string animatorRunningBoolName;
         [SerializeField] private JumpAction.JumpSettings jumpSettings;
         [SerializeField] private Animator animator;
         [SerializeField] private string animatorGroundedBoolName;
@@ -73,7 +74,12 @@ namespace EnhancedDIAttempt.Installers
                             (
                                 new ForceMultipOnRunRb2DMoverDecorator
                                 (
-                                    new Rb2DMover(_commonActionsInstaller.ActorInfoProvider.FinalValue.GetRb()),
+                                    new SettingAnimatorBoolRb2DMoverDecorator
+                                    (
+                                        new Rb2DMover(_commonActionsInstaller.ActorInfoProvider.FinalValue.GetRb()),
+                                        new AnimatorBoolSetter(animator, Animator.StringToHash(animatorRunningBoolName)),
+                                        0.5f
+                                    ),
                                     inputActions.Run,
                                     runSpeedMultiplier
                                 ),

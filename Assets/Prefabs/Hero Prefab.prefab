@@ -65,7 +65,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3015956715069372124, guid: de6850e8bb37dcd47baa3345347f6ec4, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3015956715069372124, guid: de6850e8bb37dcd47baa3345347f6ec4, type: 3}
       propertyPath: m_LocalRotation.x
@@ -73,7 +73,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3015956715069372124, guid: de6850e8bb37dcd47baa3345347f6ec4, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3015956715069372124, guid: de6850e8bb37dcd47baa3345347f6ec4, type: 3}
       propertyPath: m_LocalRotation.z
@@ -85,7 +85,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3015956715069372124, guid: de6850e8bb37dcd47baa3345347f6ec4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 180
       objectReference: {fileID: 0}
     - target: {fileID: 3015956715069372124, guid: de6850e8bb37dcd47baa3345347f6ec4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -185,6 +185,7 @@ MonoBehaviour:
   movementSettings:
     WalkSpeed: 5
   runSpeedMultiplier: 3
+  animatorRunningBoolName: Running
   jumpSettings:
     JumpCooldown: 1
     JumpForce: 5
