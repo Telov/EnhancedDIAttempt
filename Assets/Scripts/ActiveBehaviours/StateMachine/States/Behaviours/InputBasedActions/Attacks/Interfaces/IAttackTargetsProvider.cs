@@ -5,6 +5,6 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.States.InputBasedActio
 {
     public interface IAttackTargetsProvider
     {
-        public IEnumerable<IDamageGetter> GetAttackTargets();
+        public ICollection<IDamageGetter> GetAttackTargets();
     }
 }

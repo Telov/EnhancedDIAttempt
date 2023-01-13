@@ -5,53 +5,51 @@ namespace EnhancedDIAttempt.Utils.UpdatesController
 {
     public class MonoUpdatesController : MonoBehaviour, IUpdatesController
     {
-        private Action _onUpdate = () => { };
-        private Action _onFixedUpdate = () => { };
-        private  Action _onLateUpdate  = () => { };
+        private readonly global::UpdatesController _updatesController = new global::UpdatesController();
         
         public void AddUpdateCallback(Action action)
         {
-            _onUpdate += action;
+            _updatesController.AddUpdateCallback(action);
         }
 
         public void RemoveUpdateCallback(Action action)
         {
-            _onUpdate -= action;
+            _updatesController.RemoveUpdateCallback(action);
         }
 
         public void AddFixedUpdateCallback(Action action)
         {
-            _onFixedUpdate += action;
+            _updatesController.AddFixedUpdateCallback(action);
         }
 
         public void RemoveFixedUpdateCallback(Action action)
         {
-            _onFixedUpdate -= action;
+            _updatesController.RemoveFixedUpdateCallback(action);
         }
 
         public void AddLateUpdateCallback(Action action)
         {
-            _onLateUpdate += action;
+            _updatesController.AddLateUpdateCallback(action);
         }
 
         public void RemoveLateUpdateCallback(Action action)
         {
-            _onLateUpdate -= action;
+            _updatesController.RemoveLateUpdateCallback(action);
         }
 
         private void Update()
         {
-            _onUpdate.Invoke();
+            _updatesController.Tick();
         }
 
-        public void FixedUpdate()
+        private void FixedUpdate()
         {
-            _onFixedUpdate.Invoke();
+            _updatesController.FixedTick();
         }
 
         private void LateUpdate()
         {
-            _onLateUpdate.Invoke();
+            _updatesController.LateTick();
         }
     }
 }

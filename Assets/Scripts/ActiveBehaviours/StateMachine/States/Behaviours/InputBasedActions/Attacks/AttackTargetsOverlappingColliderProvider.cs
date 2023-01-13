@@ -14,7 +14,7 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.States.InputBasedActio
 
         private readonly Collider2D _collider;
         
-        public IEnumerable<IDamageGetter> GetAttackTargets()
+        public ICollection<IDamageGetter> GetAttackTargets()
         {
             List<Collider2D> colliders = new List<Collider2D>();
 

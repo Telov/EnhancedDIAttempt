@@ -2,6 +2,7 @@ using EnhancedDIAttempt.AnimationInteraction;
 using EnhancedDIAttempt.ActiveBehaviours.StateMachine.States;
 using EnhancedDIAttempt.ActiveBehaviours.StateMachine.States.InputBasedActions;
 using EnhancedDIAttempt.AnimationInteraction.MoveAction;
+using EnhancedDIAttempt.Damage;
 using EnhancedDIAttempt.Utils.MecanimStateMachine;
 using UnityEngine;
 using Zenject;
@@ -25,6 +26,7 @@ namespace EnhancedDIAttempt.Installers
 
         [Inject] private IUpdatesController _updatesController;
         [Inject] private CommonActionsInstaller _commonActionsInstaller;
+        [Inject] private HealthInstaller _healthInstaller;
 
         public override void DecorateProperties()
         {
@@ -38,27 +40,6 @@ namespace EnhancedDIAttempt.Installers
 
             Animator animator = _commonActionsInstaller.animator;
             var attackAnimatorStateInfoProvider = animator.GetBehaviour<AnimatorAttackStateExitedNotifier>();
-
-            IBehaviour attackAction =
-                new AttackAction
-                (
-                    new AttackTargetsOverlappingColliderProvider(attackCollider),
-                    new SimpleCooldownController(attackCooldown),
-                    new DependantOnAnimationContinuousDamageDealerDecorator
-                    (
-                        new ContinuousDamageDealerDecorator
-                        (
-                            new SimpleDamageDealer(),
-                            toggleableAttackAllower
-                        ),
-                        toggleableAttackAllower,
-                        attackAnimatorStateInfoProvider,
-                        new AnimatorBoolSetter(animator, Animator.StringToHash(animatorAttackingBoolName))
-                    ),
-                    inputActions.Attack,
-                    attackDamage
-                );
-
 
             _commonActionsInstaller.OnGroundStateBehaviours.Decorate
             (
@@ -92,6 +73,30 @@ namespace EnhancedDIAttempt.Installers
                             _commonActionsInstaller.ActorInfoProvider.FinalValue,
                             _commonActionsInstaller.ActorInfoProvider.FinalValue,
                             inputActions.Jump
+                        );
+                    
+                    IBehaviour attackAction =
+                        new AttackAction
+                        (
+                            new FilteringAttackTargetsProviderDecorator
+                            (
+                                new AttackTargetsOverlappingColliderProvider(attackCollider),
+                                new []{_healthInstaller.Health.FinalValue}
+                            ),
+                            new SimpleCooldownController(attackCooldown),
+                            new DependantOnAnimationContinuousDamageDealerDecorator
+                            (
+                                new ContinuousDamageDealerDecorator
+                                (
+                                    new SimpleDamageDealer(),
+                                    toggleableAttackAllower
+                                ),
+                                toggleableAttackAllower,
+                                attackAnimatorStateInfoProvider,
+                                new AnimatorBoolSetter(animator, Animator.StringToHash(animatorAttackingBoolName))
+                            ),
+                            inputActions.Attack,
+                            attackDamage
                         );
 
                     return new BehavioursProviderCompositeDecorator

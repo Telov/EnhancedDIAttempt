@@ -1,5 +1,7 @@
+using EnhancedDIAttempt.Damage;
 using EnhancedDIAttempt.Health;
 using EnhancedDIAttempt.Utils.CollisionManager;
+using EnhancedDIAttempt.Utils.ZenjectAdditions;
 using UnityEngine;
 using Zenject;
 
@@ -11,9 +13,12 @@ namespace EnhancedDIAttempt.Installers
         [SerializeField] private float startHealth;
         [SerializeField] private float maxHealth;
 
+        public DecorationProperty<IHealthController> Health = new();
+
         public override void InstallBindings()
         {
-            IHealthController health =
+            Health.Set
+            (
                 new HealthCollisionSubscriberDecorator
                 (
                     new HealthLoggerDecorator
@@ -21,8 +26,9 @@ namespace EnhancedDIAttempt.Installers
                         new SimpleHealth(startHealth, maxHealth)
                     ),
                     collisionManager
-                );
-            Container.Bind<IHealthController>().FromInstance(health);
+                )
+            );
+            Container.Bind<IHealthController>().FromInstance(Health.FinalValue);
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace EnhancedDIAttempt.Utils.CollisionManager
@@ -11,27 +12,34 @@ namespace EnhancedDIAttempt.Utils.CollisionManager
             return collider.GetComponent<ICollisionManager>();
         }
         
-        public static IEnumerable<ICollisionManager> GetCollisionManagerFromEachCollider(this IEnumerable<Collider2D> colliders)
+        public static ICollection<ICollisionManager> GetCollisionManagerFromEachCollider(this IEnumerable<Collider2D> colliders)
         {
+            List<ICollisionManager> list = new();
             foreach (Collider2D collider in colliders)
             {
                 var manager = collider.GetCollisionManager();
                 if(manager == null) continue;
-                yield return manager;
+                list.Add(manager);
             }
+
+            return new List<ICollisionManager>(list);
         }
 
-        public static IEnumerable<T> GetAllTFromEachCollisionManager<T>(this IEnumerable<Collider2D> colliders)
+        public static ICollection<T> GetAllTFromEachCollisionManager<T>(this IEnumerable<Collider2D> colliders)
         {
+            List<T> list = new();
             foreach (Collider2D collider in colliders)
             {
                 var manager = collider.GetCollisionManager();
                 if(manager == null) continue;
-                foreach (T subscriber in manager.GetSubscribers<T>())
+
+                foreach (var subscriber in manager.GetSubscribers<T>())
                 {
-                    yield return subscriber;
+                    list.Add(subscriber);
                 }
             }
+            
+            return new List<T>(list);
         }
 
         public static void CallWithEachTOfEachCollisionManager<T>(this IEnumerable<Collider2D> colliders, Action<T> action)
