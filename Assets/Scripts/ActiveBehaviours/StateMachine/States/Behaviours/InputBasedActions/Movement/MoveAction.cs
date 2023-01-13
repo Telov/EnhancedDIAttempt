@@ -22,16 +22,16 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.States.InputBasedActio
 
         public void Activate(EnhancedDIAttempt.StateMachine.StateMachine.CallbackContext callbackContext)
         {
-            if (_data.MoveAction.inProgress) TryStartWorking(default);
-            _data.MoveAction.started += TryStartWorking;
-            _data.MoveAction.canceled += StopWorking;
+            if (_data.InputAction.inProgress) TryStartWorking(default);
+            _data.InputAction.started += TryStartWorking;
+            _data.InputAction.canceled += StopWorking;
         }
 
         public void Deactivate()
         {
             if (_started) StopWorking(default);
-            _data.MoveAction.started -= TryStartWorking;
-            _data.MoveAction.canceled -= StopWorking;
+            _data.InputAction.started -= TryStartWorking;
+            _data.InputAction.canceled -= StopWorking;
         }
 
         private void TryStartWorking(InputAction.CallbackContext ctx)
@@ -52,7 +52,7 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.States.InputBasedActio
         private void OnFixedUpdate()
         {
             if(!_data.MoveAllower.Allows) return;
-            _data.Rb2DMover.Move(_data.MoveAction.ReadValue<float>() * _movementSettings.WalkSpeed, Vector3.right);
+            _data.Rb2DMover.Move(_movementSettings.WalkSpeed, _data.InputAction.ReadValue<float>() * Vector3.right);
         }
 
         [System.Serializable]

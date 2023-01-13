@@ -14,8 +14,6 @@ namespace EnhancedDIAttempt.Installers
         [SerializeField] private float runSpeedMultiplier;
         [SerializeField] private string animatorRunningBoolName;
         [SerializeField] private JumpAction.JumpSettings jumpSettings;
-        [SerializeField] private Animator animator;
-        [SerializeField] private string animatorGroundedBoolName;
 
         [Header("AttackAction")] [SerializeField]
         private Collider2D attackCollider;
@@ -35,10 +33,10 @@ namespace EnhancedDIAttempt.Installers
             actionMap.Enable();
             var inputActions = actionMap.PlayerActionMap;
 
-            int animatorGroundedBoolId = Animator.StringToHash(animatorGroundedBoolName);
 
             var toggleableAttackAllower = new ToggleableAttackAllowerDecorator(new BaseAttackAllower(maxAttackDuration));
 
+            Animator animator = _commonActionsInstaller.animator;
             var attackAnimatorStateInfoProvider = animator.GetBehaviour<AnimatorAttackStateExitedNotifier>();
 
             IBehaviour attackAction =
@@ -70,22 +68,12 @@ namespace EnhancedDIAttempt.Installers
                         new MoveActionData
                         (
                             _updatesController,
-                            new RotatingCharacterRb2DMoverDecorator
+                            new ForceMultipOnRunRb2DMoverDecorator
                             (
-                                new ForceMultipOnRunRb2DMoverDecorator
-                                (
-                                    new SettingAnimatorBoolRb2DMoverDecorator
-                                    (
-                                        new Rb2DMover(_commonActionsInstaller.ActorInfoProvider.FinalValue.GetRb()),
-                                        new AnimatorBoolSetter(animator, Animator.StringToHash(animatorRunningBoolName)),
-                                        0.5f
-                                    ),
-                                    inputActions.Run,
-                                    runSpeedMultiplier
-                                ),
-                                _commonActionsInstaller.ActorInfoProvider.FinalValue.GetTransform()
-                            )
-                            ,
+                                _commonActionsInstaller.Rb2DMover.FinalValue,
+                                inputActions.Run,
+                                runSpeedMultiplier
+                            ),
                             new AnimationDependantMoveAllowerDecorator
                             (
                                 new SimpleMoveAllower(),
@@ -106,7 +94,7 @@ namespace EnhancedDIAttempt.Installers
                             inputActions.Jump
                         );
 
-                    return new BehavioursProviderDecorator
+                    return new BehavioursProviderCompositeDecorator
                     (
                         x,
                         moveAction,
@@ -116,24 +104,13 @@ namespace EnhancedDIAttempt.Installers
                 }
             );
 
-            _commonActionsInstaller.OnGroundState.Decorate
-            (
-                x =>
-                    new AnimatorBoolChangerStateDecorator
-                    (
-                        x,
-                        new AnimatorBoolSetter(animator, animatorGroundedBoolId),
-                        false
-                    )
-            );
-
             _commonActionsInstaller.InAirState.Decorate
             (
                 x =>
                     new AnimatorBoolChangerStateDecorator
                     (
                         x,
-                        new AnimatorBoolSetter(animator, animatorGroundedBoolId),
+                        new AnimatorBoolSetter(animator, Animator.StringToHash(_commonActionsInstaller.animatorGroundedBoolName)),
                         true
                     )
             );

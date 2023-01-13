@@ -8,17 +8,17 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.States.InputBasedActio
             IUpdatesController updatesController,
             IRb2DMover rb2DMover,
             IMoveAllower moveAllower,
-            InputAction moveAction)
+            InputAction inputAction)
         {
             UpdatesController = updatesController;
             Rb2DMover = rb2DMover;
             MoveAllower = moveAllower;
-            MoveAction = moveAction;
+            InputAction = inputAction;
         }
         
         public readonly IUpdatesController UpdatesController;
         public readonly IRb2DMover Rb2DMover;
         public readonly IMoveAllower MoveAllower;
-        public readonly InputAction MoveAction;
+        public readonly InputAction InputAction;
     }
 }

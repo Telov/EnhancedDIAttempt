@@ -3,9 +3,9 @@ using System.Linq;
 
 namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.States
 {
-    public class BehavioursProviderDecorator : IBehavioursProvider
+    public class BehavioursProviderCompositeDecorator : IBehavioursProvider
     {
-        public BehavioursProviderDecorator(IBehavioursProvider behavioursProvider, params IBehaviour[] behaviours)
+        public BehavioursProviderCompositeDecorator(IBehavioursProvider behavioursProvider, params IBehaviour[] behaviours)
         {
             _behavioursProvider = behavioursProvider;
             _behaviours = behaviours;

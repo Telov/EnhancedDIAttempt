@@ -17,13 +17,13 @@ namespace EnhancedDIAttempt.Installers
         {
             _commonActionsInstaller.OnGroundStateBehaviours.Decorate
             (x =>
-                new BehavioursProviderDecorator
+                new BehavioursProviderCompositeDecorator
                 (
                     x,
                     new WanderingAction
                     (
                         _updatesController,
-                        new Rb2DMover(_commonActionsInstaller.ActorInfoProvider.FinalValue.GetRb()),
+                        _commonActionsInstaller.Rb2DMover.FinalValue,
                         wanderingTimeInOneDirection,
                         wanderSpeed
                     )

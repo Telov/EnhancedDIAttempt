@@ -169,6 +169,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef5921a0e5a04c118f43d45d26f84086, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 2100828242233052798}
+  animatorGroundedBoolName: Grounded
   rb: {fileID: 3015956715069372098}
   actorTransform: {fileID: 3015956715069372124}
   actorCollider: {fileID: 7534747057561890741}
@@ -176,6 +178,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   onGroundHorizontalSlowdownCoef: 0.2
+  animatorRunningBoolName: Running
 --- !u!1 &3015956715069372122
 GameObject:
   m_ObjectHideFlags: 0
