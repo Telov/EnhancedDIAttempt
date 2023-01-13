@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using EnhancedDIAttempt.ActiveBehaviours;
 using EnhancedDIAttempt.ActiveBehaviours.StateMachine;
 using EnhancedDIAttempt.ActiveBehaviours.StateMachine.States;
+using EnhancedDIAttempt.ActiveBehaviours.StateMachine.States.Interfaces;
 using EnhancedDIAttempt.AnimationInteraction;
 using EnhancedDIAttempt.AnimationInteraction.MoveAction;
 using EnhancedDIAttempt.StateMachine;
@@ -35,6 +36,8 @@ namespace EnhancedDIAttempt.Installers
         public readonly DecorationProperty<IStatesProvider> StatesProvider = new();
         public readonly DecorationProperty<IController> StateMachine = new();
         public readonly DecorationProperty<IRb2DMover> Rb2DMover = new();
+        public readonly DecorationProperty<IMoveRuler> MoveRuler = new();
+        public readonly DecorationProperty<IBehaviour> WalkBehaviour = new();
 
         public override void InstallBindings()
         {
@@ -58,18 +61,6 @@ namespace EnhancedDIAttempt.Installers
                 )
             );
 
-
-            OnGroundStateBehaviours.Set
-            (
-                new SimpleBehavioursProvider
-                (
-                    new List<IBehaviour>()
-                )
-            );
-
-
-            int animatorGroundedBoolId = Animator.StringToHash(animatorGroundedBoolName);
-
             Rb2DMover.Set
             (
                 new RotatingCharacterRb2DMoverDecorator
@@ -83,6 +74,28 @@ namespace EnhancedDIAttempt.Installers
                     ActorInfoProvider.FinalValue.GetTransform()
                 )
             );
+
+            MoveRuler.Set
+            (
+                new EmptyMoveRuler()
+            );
+
+            WalkBehaviour.Set
+            (
+                new MoveBehaviour(Rb2DMover.FinalValue, MoveRuler.FinalValue)
+            ); 
+            
+            OnGroundStateBehaviours.Set
+            (
+                new SimpleBehavioursProvider
+                (
+                    new List<IBehaviour> { WalkBehaviour.FinalValue }
+                )
+            );
+
+
+            int animatorGroundedBoolId = Animator.StringToHash(animatorGroundedBoolName);
+
             OnGroundState.Set
             (
                 new AnimatorBoolChangerStateDecorator

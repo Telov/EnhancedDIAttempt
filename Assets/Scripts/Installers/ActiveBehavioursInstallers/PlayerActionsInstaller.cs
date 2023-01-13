@@ -1,8 +1,7 @@
 using EnhancedDIAttempt.AnimationInteraction;
 using EnhancedDIAttempt.ActiveBehaviours.StateMachine.States;
-using EnhancedDIAttempt.ActiveBehaviours.StateMachine.States.InputBasedActions;
+using EnhancedDIAttempt.ActiveBehaviours.StateMachine.States.InputBased;
 using EnhancedDIAttempt.AnimationInteraction.MoveAction;
-using EnhancedDIAttempt.Damage;
 using EnhancedDIAttempt.Utils.MecanimStateMachine;
 using UnityEngine;
 using Zenject;
@@ -11,9 +10,8 @@ namespace EnhancedDIAttempt.Installers
 {
     public class PlayerActionsInstaller : MonoInstaller
     {
-        [SerializeField] private MoveAction.MovementSettings movementSettings;
+        [SerializeField] private InputBasedMoveRulerDecorator.MovementSettings movementSettings;
         [SerializeField] private float runSpeedMultiplier;
-        [SerializeField] private string animatorRunningBoolName;
         [SerializeField] private JumpAction.JumpSettings jumpSettings;
 
         [Header("AttackAction")] [SerializeField]
@@ -41,31 +39,37 @@ namespace EnhancedDIAttempt.Installers
             Animator animator = _commonActionsInstaller.animator;
             var attackAnimatorStateInfoProvider = animator.GetBehaviour<AnimatorAttackStateExitedNotifier>();
 
+
+            _commonActionsInstaller.Rb2DMover.Decorate
+            (x =>
+                    new ForceMultipOnRunRb2DMoverDecorator
+                    (
+                        x,
+                        inputActions.Run,
+                        runSpeedMultiplier
+                    )
+            );
+
+            _commonActionsInstaller.MoveRuler.Decorate
+            ((x) =>
+                new InputBasedMoveRulerDecorator
+                (
+                    x,
+                    _updatesController,
+                    new AnimationDependantMoveAllowerDecorator
+                    (
+                        new SimpleMoveAllower(),
+                        attackAnimatorStateInfoProvider
+                    ),
+                    inputActions.Movement,
+                    movementSettings
+                )
+            );
+
             _commonActionsInstaller.OnGroundStateBehaviours.Decorate
             (
                 x =>
                 {
-                    MoveActionData moveActionData =
-                        new MoveActionData
-                        (
-                            _updatesController,
-                            new ForceMultipOnRunRb2DMoverDecorator
-                            (
-                                _commonActionsInstaller.Rb2DMover.FinalValue,
-                                inputActions.Run,
-                                runSpeedMultiplier
-                            ),
-                            new AnimationDependantMoveAllowerDecorator
-                            (
-                                new SimpleMoveAllower(),
-                                attackAnimatorStateInfoProvider
-                            ),
-                            inputActions.Movement
-                        );
-
-                    IBehaviour moveAction =
-                        new MoveAction(movementSettings, moveActionData);
-
                     IBehaviour jumpAction =
                         new JumpAction
                         (
@@ -74,14 +78,14 @@ namespace EnhancedDIAttempt.Installers
                             _commonActionsInstaller.ActorInfoProvider.FinalValue,
                             inputActions.Jump
                         );
-                    
+
                     IBehaviour attackAction =
                         new AttackAction
                         (
                             new FilteringAttackTargetsProviderDecorator
                             (
                                 new AttackTargetsOverlappingColliderProvider(attackCollider),
-                                new []{_healthInstaller.Health.FinalValue}
+                                new[] { _healthInstaller.Health.FinalValue }
                             ),
                             new SimpleCooldownController(attackCooldown),
                             new DependantOnAnimationContinuousDamageDealerDecorator
@@ -102,7 +106,6 @@ namespace EnhancedDIAttempt.Installers
                     return new BehavioursProviderCompositeDecorator
                     (
                         x,
-                        moveAction,
                         jumpAction,
                         attackAction
                     );

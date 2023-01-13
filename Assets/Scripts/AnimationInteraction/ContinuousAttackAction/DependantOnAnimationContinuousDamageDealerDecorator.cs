@@ -1,5 +1,5 @@
 using System;
-using EnhancedDIAttempt.ActiveBehaviours.StateMachine.States.InputBasedActions;
+using EnhancedDIAttempt.ActiveBehaviours.StateMachine.States.InputBased;
 using EnhancedDIAttempt.Utils.MecanimStateMachine;
 
 namespace EnhancedDIAttempt.AnimationInteraction

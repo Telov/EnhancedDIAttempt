@@ -15,18 +15,14 @@ namespace EnhancedDIAttempt.Installers
 
         public override void DecorateProperties()
         {
-            _commonActionsInstaller.OnGroundStateBehaviours.Decorate
+            _commonActionsInstaller.MoveRuler.Decorate
             (x =>
-                new BehavioursProviderCompositeDecorator
+                new WanderingMoveRulerDecorator
                 (
                     x,
-                    new WanderingAction
-                    (
-                        _updatesController,
-                        _commonActionsInstaller.Rb2DMover.FinalValue,
-                        wanderingTimeInOneDirection,
-                        wanderSpeed
-                    )
+                    _updatesController,
+                    wanderingTimeInOneDirection,
+                    wanderSpeed
                 )
             );
         }
