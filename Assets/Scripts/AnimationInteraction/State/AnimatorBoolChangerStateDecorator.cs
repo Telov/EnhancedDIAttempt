@@ -1,4 +1,4 @@
-using EnhancedDIAttempt.Utils.MecanimStateMachine;
+using Telov.Utils;
 
 namespace EnhancedDIAttempt.AnimationInteraction
 {

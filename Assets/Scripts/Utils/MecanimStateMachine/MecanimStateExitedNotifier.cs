@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace EnhancedDIAttempt.Utils.MecanimStateMachine
+namespace Telov.Utils
 {
     public class MecanimStateExitedNotifier : StateMachineBehaviour, IMecanimStateInfoProvider
     {

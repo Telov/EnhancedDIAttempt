@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.States
+namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine
 {
     public class SimpleBehavioursProvider : IBehavioursProvider
     {

@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace EnhancedDIAttempt.ActiveBehaviours
 {
-    public class ActorInfoProvider : IActorCenterProvider, IActorRbProvider, IActorHeightProvider, IActorTransformProvider
+    public class ActorInfoProvider : IActorCenterProvider, IActorRbProvider, IActorHeightProvider, IActorTransformProvider, IActorColliderProvider
     {
         public ActorInfoProvider(Transform actorTransform, Rigidbody2D rb, Collider2D actorCollider)
         {
@@ -33,6 +33,11 @@ namespace EnhancedDIAttempt.ActiveBehaviours
         public Transform GetTransform()
         {
             return ActorTransform;
+        }
+
+        public Collider2D GetCollider()
+        {
+            return ActorCollider;
         }
     }
 }

@@ -1,7 +1,7 @@
-using EnhancedDIAttempt.ActiveBehaviours.StateMachine.States.InputBased;
-using EnhancedDIAttempt.Utils.MecanimStateMachine;
+using EnhancedDIAttempt.ActiveBehaviours.StateMachine.Behaviours;
+using Telov.Utils;
 
-namespace EnhancedDIAttempt.AnimationInteraction.MoveAction
+namespace EnhancedDIAttempt.AnimationInteraction
 {
     public class AnimationDependantMoveAllowerDecorator : IMoveAllower
     {

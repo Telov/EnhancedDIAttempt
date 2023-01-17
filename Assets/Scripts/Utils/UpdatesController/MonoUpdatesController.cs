@@ -1,11 +1,11 @@
 using System;
 using UnityEngine;
 
-namespace EnhancedDIAttempt.Utils.UpdatesController
+namespace Telov.Utils
 {
     public class MonoUpdatesController : MonoBehaviour, IUpdatesController
     {
-        private readonly global::UpdatesController _updatesController = new global::UpdatesController();
+        private readonly UpdatesController _updatesController = new UpdatesController();
         
         public void AddUpdateCallback(Action action)
         {

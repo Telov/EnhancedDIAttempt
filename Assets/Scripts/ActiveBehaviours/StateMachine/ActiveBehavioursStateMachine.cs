@@ -1,6 +1,6 @@
 using EnhancedDIAttempt.StateMachine;
 
-namespace EnhancedDIAttempt.ActiveBehaviours
+namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine
 {
     public class ActiveBehavioursStateMachine : EnhancedDIAttempt.StateMachine.StateMachine, IController
     {

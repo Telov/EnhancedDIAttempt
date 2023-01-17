@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace EnhancedDIAttempt.Utils.MecanimStateMachine
+namespace Telov.Utils
 {
     public class AnimatorBoolSetter : IAnimatorBoolSetter
     {

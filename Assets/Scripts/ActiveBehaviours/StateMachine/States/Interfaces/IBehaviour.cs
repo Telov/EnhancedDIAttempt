@@ -1,4 +1,4 @@
-namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.States
+namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine
 {
     public interface IBehaviour
     {

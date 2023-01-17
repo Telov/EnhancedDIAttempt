@@ -1,3 +1,6 @@
+using Telov.Utils;
+using UnityEngine;
+
 namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.States
 {
     public class InAirStateDecorator : IState
@@ -26,6 +29,7 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.States
 
         public void Activate(EnhancedDIAttempt.StateMachine.StateMachine.CallbackContext callbackContext)
         {
+            Debug.Log("Air entered");
             _callbackContext = callbackContext;
             StartUpdating();
             _state.Activate(callbackContext);

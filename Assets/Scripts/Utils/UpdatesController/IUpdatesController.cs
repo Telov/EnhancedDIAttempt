@@ -1,11 +1,14 @@
 using System;
 
-public interface IUpdatesController
+namespace Telov.Utils
 {
-    public void AddUpdateCallback(Action action);
-    public void RemoveUpdateCallback(Action action);
-    public void AddFixedUpdateCallback(Action action);
-    public void RemoveFixedUpdateCallback(Action action);
-    public void AddLateUpdateCallback(Action action);
-    public void RemoveLateUpdateCallback(Action action);
+    public interface IUpdatesController
+    {
+        public void AddUpdateCallback(Action action);
+        public void RemoveUpdateCallback(Action action);
+        public void AddFixedUpdateCallback(Action action);
+        public void RemoveFixedUpdateCallback(Action action);
+        public void AddLateUpdateCallback(Action action);
+        public void RemoveLateUpdateCallback(Action action);
+    }
 }

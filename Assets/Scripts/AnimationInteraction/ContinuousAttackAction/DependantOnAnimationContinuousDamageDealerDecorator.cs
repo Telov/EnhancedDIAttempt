@@ -1,60 +1,80 @@
 using System;
-using EnhancedDIAttempt.ActiveBehaviours.StateMachine.States.InputBased;
-using EnhancedDIAttempt.Utils.MecanimStateMachine;
+using System.Collections.Generic;
+using EnhancedDIAttempt.ActiveBehaviours.StateMachine.Behaviours;
+using EnhancedDIAttempt.Damage;
+using Telov.Utils;
 
 namespace EnhancedDIAttempt.AnimationInteraction
 {
-    public class DependantOnAnimationContinuousDamageDealerDecorator :  IContinuousDamageDealer
+    public class DependantOnAnimationContinuousDamageDealerDecorator : IContinuousDamageDealer
     {
         public DependantOnAnimationContinuousDamageDealerDecorator
         (
             IContinuousDamageDealer continuousDamageDealer,
-            IToggleableAttackAllower toggleableAttackAllower,
-            IMecanimStateExitedNotifier stateExitedNotifier,
+            IUsableInterrupter interrupter,
+            ICommonCharacterAnimationsEventsNotifier animEventsNotifier,
             IAnimatorBoolSetter animatorBoolSetter
         )
         {
             _continuousDamageDealer = continuousDamageDealer;
-            _toggleableAttackAllower = toggleableAttackAllower;
-            _stateExitedNotifier = stateExitedNotifier;
+            _interrupter = interrupter;
+            _animEventsNotifier = animEventsNotifier;
             _animatorBoolSetter = animatorBoolSetter;
         }
-        
+
         private readonly IContinuousDamageDealer _continuousDamageDealer;
-        private readonly IToggleableAttackAllower _toggleableAttackAllower;
-        private readonly IMecanimStateExitedNotifier _stateExitedNotifier;
+        private readonly IUsableInterrupter _interrupter;
+        private readonly ICommonCharacterAnimationsEventsNotifier _animEventsNotifier;
         private readonly IAnimatorBoolSetter _animatorBoolSetter;
 
         public event Action OnAttackStarted;
         public event Action OnAttackEnded;
-        
-        public void DealDamage(IAttackTargetsProvider targetsProvider, float amount)
-        {
-            _continuousDamageDealer.OnAttackStarted += StartWorking;
-            _continuousDamageDealer.OnAttackStarted += OnAttackStarted;
-            _continuousDamageDealer.OnAttackEnded += StopWorking;
-            _continuousDamageDealer.OnAttackEnded += OnAttackEnded;
-            
-            _continuousDamageDealer.DealDamage(targetsProvider, amount);
-        }
 
-        private void StartWorking()
+        private Context _context;
+        private IEnumerable<IDamageGetter> _damageGetters;
+        private float _amount;
+
+        public void DealDamage(Context context, IEnumerable<IDamageGetter> damageGetters, float amount)
         {
-            _toggleableAttackAllower.ToggleOn();
-            _stateExitedNotifier.OnStateExited += StopWorking;
+            _damageGetters = damageGetters;
+            _amount = amount;
+            _context = context;
+
+            _context.OnDeactivated += _animatorBoolSetter.SetBoolToFalse;
+
+            _animEventsNotifier.OnAttackStart += StartDealingDamage;
+            _animEventsNotifier.OnAttackEnd += StopFromAnimEvent;
+
+            _continuousDamageDealer.OnAttackEnded += StopFromOriginal;
+
             _animatorBoolSetter.SetBoolToTrue();
         }
-        
-        private void StopWorking()
+
+        private void StartDealingDamage()
         {
-            _toggleableAttackAllower.ToggleOff();
-            _stateExitedNotifier.OnStateExited -= StopWorking;
+            _context.OnDeactivated -= _animatorBoolSetter.SetBoolToFalse;
             
+            _continuousDamageDealer.OnAttackStarted += OnAttackStarted;
+            _continuousDamageDealer.OnAttackEnded += OnAttackEnded;
+            _continuousDamageDealer.DealDamage(_context, _damageGetters, _amount);
+        }
+
+        private void StopFromAnimEvent()
+        {
+            StopFromOriginal();
+            _interrupter.Interrupt();
+            OnAttackEnded?.Invoke();
+        }
+
+        private void StopFromOriginal()
+        {
+            _animEventsNotifier.OnAttackStart -= StartDealingDamage;
+            _animEventsNotifier.OnAttackEnd -= StopFromAnimEvent;
+            _continuousDamageDealer.OnAttackEnded -= StopFromOriginal;
+
             _animatorBoolSetter.SetBoolToFalse();
-            
-            _continuousDamageDealer.OnAttackStarted -= StartWorking;
+
             _continuousDamageDealer.OnAttackStarted -= OnAttackStarted;
-            _continuousDamageDealer.OnAttackEnded -= StopWorking;
             _continuousDamageDealer.OnAttackEnded -= OnAttackEnded;
         }
     }

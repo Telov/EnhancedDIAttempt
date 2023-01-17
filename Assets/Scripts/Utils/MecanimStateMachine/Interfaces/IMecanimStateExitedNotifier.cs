@@ -1,6 +1,6 @@
 using System;
 
-namespace EnhancedDIAttempt.Utils.MecanimStateMachine
+namespace Telov.Utils
 {
     public interface IMecanimStateExitedNotifier
     {
