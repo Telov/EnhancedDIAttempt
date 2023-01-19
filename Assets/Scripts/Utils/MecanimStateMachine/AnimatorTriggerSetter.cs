@@ -4,10 +4,10 @@ namespace Telov.Utils
 {
     public class AnimatorTriggerSetter : IAnimatorTriggerSetter
     {
-        public AnimatorTriggerSetter(Animator animator, string triggerName)
+        public AnimatorTriggerSetter(Animator animator, int triggerHash)
         {
             _animator = animator;
-            _triggerHash = Animator.StringToHash(triggerName);
+            _triggerHash = triggerHash;
         }
 
         private readonly Animator _animator;

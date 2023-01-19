@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using EnhancedDIAttempt.Damage;
 using Telov.Utils;
@@ -12,19 +11,19 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.Behaviours
         public ContinuousDamageDealerDecorator
         (
             IDamageDealer damageDealer,
-            ICoroutinesHost coroutinesHost,
+            IUpdatesController updatesController,
             IAttackTargetsProvider targetsProvider,
             IAttackInterrupter interrupter
         )
         {
             _damageDealer = damageDealer;
-            _coroutinesHost = coroutinesHost;
+            _updatesController = updatesController;
             _targetsProvider = targetsProvider;
             _interrupter = interrupter;
         }
 
         private readonly IDamageDealer _damageDealer;
-        private readonly ICoroutinesHost _coroutinesHost;
+        private readonly IUpdatesController _updatesController;
         private readonly IAttackTargetsProvider _targetsProvider;
         private readonly IAttackInterrupter _interrupter;
 
@@ -32,54 +31,51 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.Behaviours
         public event Action OnAttackEnded = () => { };
 
         private Context _context;
-        private Coroutine _coroutine;
+        private float _amount;
+        private List<object> _whoGotDamage;
 
         public void DealDamage(Context context, IEnumerable<IDamageGetter> damageGetters, float amount)
         {
-            _coroutine = _coroutinesHost.StartCoroutine(AttackCoroutine(amount));
             _context = context;
-            _context.OnDeactivated += StopAttack;
-            _interrupter.OnWantToStopAttack += StopAttack;
-        }
+            _amount = amount;
+            _updatesController.AddUpdateCallback(Attack);
+            _context.OnDeactivated += InnerStopAttack;
+            _interrupter.OnWantToStopAttack += InnerStopAttack;
 
-        private IEnumerator AttackCoroutine(float amount)
-        {
-            var whoGotDamage = new List<object>();
+            _whoGotDamage = new List<object>();
 
             OnAttackStarted();
+        }
 
-            while (true)
+        private void Attack()
+        {
+            var currentTargets = new List<IDamageGetter>(_targetsProvider.GetAttackTargets());
+
+            //remove targets which already got damage
+            for (int i = 0; i < currentTargets.Count; i++)
             {
-                var currentTargets = new List<IDamageGetter>(_targetsProvider.GetAttackTargets());
+                var target = currentTargets[i];
 
-                //remove targets which already got damage
-                for (int i = 0; i < currentTargets.Count; i++)
+                if (_whoGotDamage.Contains(target))
                 {
-                    var target = currentTargets[i];
-
-                    if (whoGotDamage.Contains(target))
-                    {
-                        currentTargets.Remove(target);
-                        i--;
-                    }
+                    currentTargets.Remove(target);
+                    i--;
                 }
+            }
 
-                _damageDealer.DealDamage(_context, currentTargets, amount);
+            _damageDealer.DealDamage(_context, currentTargets, _amount);
 
-                foreach (var target in currentTargets)
-                {
-                    whoGotDamage.Add(target);
-                }
-
-                yield return new WaitForEndOfFrame();
+            foreach (var target in currentTargets)
+            {
+                _whoGotDamage.Add(target);
             }
         }
 
-        private void StopAttack()
+        private void InnerStopAttack()
         {
-            _context.OnDeactivated -= StopAttack;
-            _interrupter.OnWantToStopAttack -= StopAttack;
-            _coroutinesHost.StopCoroutine(_coroutine);
+            _context.OnDeactivated -= InnerStopAttack;
+            _interrupter.OnWantToStopAttack -= InnerStopAttack;
+            _updatesController.RemoveUpdateCallback(Attack);
             OnAttackEnded();
         }
     }

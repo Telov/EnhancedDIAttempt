@@ -4,15 +4,12 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine
 {
     public class SimpleBehavioursProvider : IBehavioursProvider
     {
-        public SimpleBehavioursProvider(ICollection<IBehaviour> behaviours)
+        public SimpleBehavioursProvider(params IBehaviour[] behaviours)
         {
-            foreach (var behaviour in behaviours)
-            {
-                _behaviours.Add(behaviour);
-            }
+            _behaviours  = new List<IBehaviour>(behaviours);
         }
 
-        private readonly List<IBehaviour> _behaviours = new ();
+        private readonly List<IBehaviour> _behaviours;
 
         public List<IBehaviour> GetBehaviours()
         {

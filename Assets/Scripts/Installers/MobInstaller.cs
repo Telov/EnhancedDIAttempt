@@ -29,7 +29,7 @@ namespace EnhancedDIAttempt.Installers
             _commonCharacterInstaller.MoveRuler.PrimaryValue = () =>
                 new WanderingMoveRuler
                 (
-                    _commonCharacterInstaller.coroutinesHost,
+                    _updatesController,
                     wanderingTimeInOneDirection
                 );
         }

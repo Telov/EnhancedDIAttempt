@@ -1,15 +1,13 @@
-using System.Collections.Generic;
-
 namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.States
 {
     public class StateBase : IState
     {
-        public StateBase(IBehavioursProvider behavioursProvider)
+        public StateBase(IBehaviour behaviour)
         {
-            _behaviours = behavioursProvider.GetBehaviours();
+            _behaviour = behaviour;
         }
     
-        private readonly List<IBehaviour> _behaviours;
+        private readonly IBehaviour _behaviour;
 
         public virtual bool IsSuitedToBeAppliedNow()
         {
@@ -18,18 +16,12 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.States
 
         public virtual void Activate(EnhancedDIAttempt.StateMachine.StateMachine.CallbackContext callbackContext)
         {
-            foreach (IBehaviour behaviour in _behaviours)
-            {
-                behaviour.Activate(callbackContext);
-            }
+            _behaviour.Activate(callbackContext);
         }
     
         public virtual void Deactivate()
         {
-            foreach (IBehaviour behaviour in _behaviours)
-            {
-                behaviour.Deactivate();
-            }
+            _behaviour.Deactivate();
         }
     }
 }

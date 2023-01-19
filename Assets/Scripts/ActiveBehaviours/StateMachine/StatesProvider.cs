@@ -5,7 +5,7 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine
 {
     public class StatesProvider : IStatesProvider
     {
-        public StatesProvider(ICollection<IState> states)
+        public StatesProvider(params IState[] states)
         {
             _states = new List<IState>(states);
         }

@@ -84,11 +84,7 @@ namespace EnhancedDIAttempt.Installers
                             new InputBasedJumpRuler(inputActions.Jump)
                         );
 
-                    return new BehavioursProviderCompositeDecorator
-                    (
-                        x,
-                        jumpAction
-                    );
+                    return new CompositeBehaviour(x, jumpAction);
                 }
             );
         }

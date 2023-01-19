@@ -18,8 +18,9 @@ namespace EnhancedDIAttempt.Installers
     public class CommonCharacterInstaller : MonoInstaller
     {
         [SerializeField] public Animator animator;
+
         [SerializeField] public CollisionManager collisionManager;
-        [SerializeField] public CoroutinesHost coroutinesHost;
+        //[SerializeField] public CoroutinesHost coroutinesHost;
 
         [FormerlySerializedAs("animEventsListener")] [SerializeField]
         public CommonCharacterAnimationsEventsNotifier animEventsNotifier;
@@ -35,6 +36,7 @@ namespace EnhancedDIAttempt.Installers
 
         [SerializeField] private Collider2D attackCollider;
         [SerializeField] private string animatorAttackingBoolName;
+        [SerializeField] private float maxTimeBetweenClickAndAttackStart;
 
         [SerializeField, Header("WalkBehaviour")]
         private string animatorRunningBoolName;
@@ -58,19 +60,16 @@ namespace EnhancedDIAttempt.Installers
         public readonly DecorationProperty<IDeathHandler> DeathHandler = new();
         public readonly DecorationProperty<IRb2DMover> Rb2DMover = new();
         public readonly DecorationProperty<IMoveRuler> MoveRuler = new();
-        public readonly DecorationProperty<IBlocker> WalkBehaviourBlocker = new();
+        public readonly DecorationProperty<IBlockable> WalkBehaviourBlock = new();
         public readonly DecorationProperty<IBehaviour> WalkBehaviour = new();
         public readonly DecorationProperty<IAttackRuler> AttackRuler = new();
         public readonly DecorationProperty<IAttackTargetsProvider> AttackTargetsProvider = new();
-        public readonly DecorationProperty<IBlocker> AttackBehaviourBlocker = new();
+        public readonly DecorationProperty<IBlockable> AttackBehaviourBlock = new();
         public readonly DecorationProperty<IBehaviour> AttackBehaviour = new();
-        public readonly DecorationProperty<IGroundChecker> GroundChecker = new();
-        public readonly DecorationProperty<IBehavioursProvider> OnGroundStateBehaviours = new();
+        public readonly DecorationProperty<IBehaviour> OnGroundStateBehaviours = new();
         public readonly DecorationProperty<IState> OnGroundState = new();
-        public readonly DecorationProperty<IBehavioursProvider> InAirStateBehavioursProvider = new();
+        public readonly DecorationProperty<IBehaviour> InAirBehaviours = new();
         public readonly DecorationProperty<IState> InAirState = new();
-        public readonly DecorationProperty<IStatesProvider> StatesProvider = new();
-        public readonly DecorationProperty<IController> StateMachine = new();
 
         [SerializeField, Header("Health")] private SpriteRenderer spriteRenderer;
         [SerializeField] private float startHealth;
@@ -92,8 +91,20 @@ namespace EnhancedDIAttempt.Installers
                     actorCollider
                 );
 
-            AttackBehaviourBlocker.PrimaryValue = () => new SimpleBlocker();
-            WalkBehaviourBlocker.PrimaryValue = () => new SimpleBlocker();
+            AttackBehaviourBlock.PrimaryValue = () => new SimpleBlockable();
+            WalkBehaviourBlock.PrimaryValue = () => new SimpleBlockable();
+
+            IBlocker walkBlocker = new SimpleBlocker(WalkBehaviourBlock.FinalValue);
+
+            IBlocker allGroundBehsBlocker =
+                new SimpleBlocker
+                (
+                    new CompositeBlockable
+                    (
+                        WalkBehaviourBlock.FinalValue,
+                        AttackBehaviourBlock.FinalValue
+                    )
+                );
 
             DeathHandler.PrimaryValue = () =>
                 new ChangingGOLayerDeathHandlerDecorator
@@ -105,14 +116,13 @@ namespace EnhancedDIAttempt.Installers
                             new FadingSpriteDeathHandlerDecorator
                             (
                                 new GODestroyerDeathHandler(ActorInfoProvider.FinalValue.GetTransform().gameObject),
-                                coroutinesHost,
+                                _updatesController,
                                 spriteRenderer,
                                 fadingOnDeathDuration
                             ),
                             new AnimatorBoolSetter(animator, Animator.StringToHash(animatorDeadBoolName))
                         ),
-                        WalkBehaviourBlocker.FinalValue,
-                        AttackBehaviourBlocker.FinalValue
+                        allGroundBehsBlocker
                     ),
                     ActorInfoProvider.FinalValue.GetCollider().gameObject,
                     deadLayerNumber
@@ -121,24 +131,30 @@ namespace EnhancedDIAttempt.Installers
             Health.PrimaryValue = () =>
                 new HealthCollisionSubscriberDecorator
                 (
-                    new TriggeringAnimationHealthDecorator
+                    new BlockingHealthDecorator
                     (
-                        new DyingHealthDecorator
+                        new SettingAnimatorBoolHealthDecorator
                         (
-                            new HealthLoggerDecorator
+                            new DyingHealthDecorator
                             (
-                                new SimpleHealth(startHealth, maxHealth)
+                                new HealthLoggerDecorator
+                                (
+                                    new SimpleHealth(startHealth, maxHealth)
+                                ),
+                                DeathHandler.FinalValue
                             ),
-                            DeathHandler.FinalValue
+                            new AnimatorBoolSetter(animator, Animator.StringToHash(animatorHurtTriggerName)),
+                            animEventsNotifier
                         ),
-                        new AnimatorTriggerSetter(animator, animatorHurtTriggerName)
+                        animEventsNotifier,
+                        allGroundBehsBlocker
                     ),
                     collisionManager
                 );
 
             Container.Bind<IHealthController>().FromInstance(Health.FinalValue).AsSingle();
 
-            GroundChecker.PrimaryValue = () =>
+            IGroundChecker groundChecker =
                 new GroundChecker
                 (
                     ActorInfoProvider.FinalValue,
@@ -156,34 +172,38 @@ namespace EnhancedDIAttempt.Installers
                 );
 
             AttackBehaviour.PrimaryValue = () =>
-                    new BlockableBehaviourDecorator
+                new BlockableBehaviourDecorator
+                (
+                    new AttackBehaviour
                     (
-                        new AttackBehaviour
+                        AttackRuler.FinalValue,
+                        new CoolingDownDamageDealerDecorator
                         (
-                            AttackRuler.FinalValue,
-                            new CoolingDownDamageDealerDecorator
+                            new DependantOnAnimationContinuousDamageDealerDecorator
                             (
-                                new DependantOnAnimationContinuousDamageDealerDecorator
+                                new BlockingContinuousDamageDealerDecorator
                                 (
                                     new ContinuousDamageDealerDecorator
                                     (
                                         new SimpleDamageDealer(),
-                                        coroutinesHost,
+                                        _updatesController,
                                         AttackTargetsProvider.FinalValue,
                                         attackInterrupter
                                     ),
-                                    attackInterrupter,
-                                    animEventsNotifier,
-                                    new AnimatorBoolSetter(animator, Animator.StringToHash(animatorAttackingBoolName))
+                                    walkBlocker
                                 ),
-                                new SimpleReloader(attackCooldown)
+                                attackInterrupter,
+                                animEventsNotifier,
+                                new AnimatorBoolSetter(animator, Animator.StringToHash(animatorAttackingBoolName)),
+                                maxTimeBetweenClickAndAttackStart
                             ),
-                            AttackTargetsProvider.FinalValue,
-                            attackPower
+                            new SimpleReloader(attackCooldown)
                         ),
-                        AttackBehaviourBlocker.FinalValue
-                    )
-                ;
+                        AttackTargetsProvider.FinalValue,
+                        attackPower
+                    ),
+                    AttackBehaviourBlock.FinalValue
+                );
 
             Rb2DMover.PrimaryValue = () =>
                 new RotatingCharacterRb2DMoverDecorator
@@ -191,7 +211,7 @@ namespace EnhancedDIAttempt.Installers
                     new SettingAnimatorBoolRb2DMoverDecorator
                     (
                         new Rb2DMover(ActorInfoProvider.FinalValue.GetRb()),
-                        coroutinesHost,
+                        _updatesController,
                         new AnimatorBoolSetter(animator, Animator.StringToHash(animatorRunningBoolName)),
                         postRunAnimationDuration
                     ),
@@ -202,17 +222,12 @@ namespace EnhancedDIAttempt.Installers
                 new BlockableBehaviourDecorator
                 (
                     new MoveBehaviour(Rb2DMover.FinalValue, MoveRuler.FinalValue, moveSpeed),
-                    WalkBehaviourBlocker.FinalValue
+                    WalkBehaviourBlock.FinalValue
                 );
 
-            OnGroundStateBehaviours.PrimaryValue = () =>
-                new SimpleBehavioursProvider
-                (
-                    new List<IBehaviour> { AttackBehaviour.FinalValue, WalkBehaviour.FinalValue }
-                );
+            IAnimatorBoolSetter groundedBoolSetter = new AnimatorBoolSetter(animator, Animator.StringToHash(animatorGroundedBoolName));
 
-
-            int animatorGroundedBoolId = Animator.StringToHash(animatorGroundedBoolName);
+            OnGroundStateBehaviours.PrimaryValue = () => new CompositeBehaviour(AttackBehaviour.FinalValue, WalkBehaviour.FinalValue);
 
             OnGroundState.PrimaryValue = () =>
                 new AnimatorBoolChangerStateDecorator
@@ -220,12 +235,12 @@ namespace EnhancedDIAttempt.Installers
                     new OnGroundStateDecorator
                     (
                         new StateBase(OnGroundStateBehaviours.FinalValue),
-                        GroundChecker.FinalValue,
+                        groundChecker,
                         _updatesController,
                         rb,
                         onGroundHorizontalSlowdownCoef
                     ),
-                    new AnimatorBoolSetter(animator, animatorGroundedBoolId),
+                    groundedBoolSetter,
                     false
                 );
 
@@ -239,34 +254,26 @@ namespace EnhancedDIAttempt.Installers
                     moveDownSpeedLimit
                 );
 
-            InAirStateBehavioursProvider.PrimaryValue = () =>
-                new SimpleBehavioursProvider(new List<IBehaviour> { moveDownBehaviour });
+            InAirBehaviours.PrimaryValue = () => new CompositeBehaviour(moveDownBehaviour);
 
             InAirState.PrimaryValue = () =>
                 new AnimatorBoolChangerStateDecorator
                 (
                     new InAirStateDecorator
                     (
-                        new StateBase(InAirStateBehavioursProvider.FinalValue),
-                        GroundChecker.FinalValue,
+                        new StateBase(InAirBehaviours.FinalValue),
+                        groundChecker,
                         _updatesController
                     ),
-                    new AnimatorBoolSetter(animator, animatorGroundedBoolId),
+                    groundedBoolSetter,
                     true
                 );
 
-            StatesProvider.PrimaryValue = () =>
-                new StatesProvider(
-                    new List<IState>
-                    {
-                        OnGroundState.FinalValue,
-                        InAirState.FinalValue
-                    }
-                );
+            IStatesProvider statesProvider = new StatesProvider(OnGroundState.FinalValue, InAirState.FinalValue);
 
-            StateMachine.PrimaryValue = () => new ActiveBehavioursStateMachine(StatesProvider.FinalValue);
+            IController controller = new ActiveBehavioursStateMachine(statesProvider);
 
-            Container.Bind<IController>().FromInstance(StateMachine.FinalValue).AsSingle();
+            Container.Bind<IController>().FromInstance(controller).AsSingle();
         }
     }
 }

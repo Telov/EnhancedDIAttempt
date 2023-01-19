@@ -45,7 +45,6 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.Behaviours.ConstantMov
             var velocity = _rb.velocity;
             float appliedForce = 1 * _speedChangePerTick * _rb.mass * _multiplier;
             appliedForce = Mathf.Clamp(appliedForce, 0, velocity.y - _speedLimit);
-            Debug.Log(appliedForce);
             _rb.AddForce(Vector2.down * appliedForce, ForceMode2D.Impulse);
             _multiplier *= _powerRiseRate;
         }

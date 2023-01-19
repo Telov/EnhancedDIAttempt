@@ -10,19 +10,19 @@ namespace EnhancedDIAttempt.AnimationInteraction
         public SettingAnimatorBoolRb2DMoverDecorator
         (
             IRb2DMover mover,
-            ICoroutinesHost coroutinesHost,
+            IUpdatesController updatesController,
             IAnimatorBoolSetter boolSetter,
             float animationLengthAfterLastMoveInSec
         )
         {
             _mover = mover;
-            _coroutinesHost = coroutinesHost;
+            _updatesController = updatesController;
             _boolSetter = boolSetter;
             _animationLengthAfterLastMoveInSec = animationLengthAfterLastMoveInSec;
         }
 
         private readonly IRb2DMover _mover;
-        private readonly ICoroutinesHost _coroutinesHost;
+        private readonly IUpdatesController _updatesController;
         private readonly IAnimatorBoolSetter _boolSetter;
         private readonly float _animationLengthAfterLastMoveInSec;
 
@@ -31,25 +31,29 @@ namespace EnhancedDIAttempt.AnimationInteraction
 
         public void Move(float speedMultiplier, Vector3 direction)
         {
-            _coroutinesHost.StartCoroutine(CountdownCoroutine());
+            _timeLeft = _animationLengthAfterLastMoveInSec;
+            if (!_countdownStarted)
+            {
+                _countdownStarted = true;
+                _updatesController.AddUpdateCallback(Countdown);
+            }
+            
             _boolSetter.SetBoolToTrue();
+
             _mover.Move(speedMultiplier, direction);
         }
 
-        private IEnumerator CountdownCoroutine()
+        private void Countdown()
         {
-            _timeLeft = _animationLengthAfterLastMoveInSec;
-            if (_countdownStarted) yield break;
-            _countdownStarted = true;
-            
-            while (_timeLeft > 0f)
+            if (_timeLeft > 0f)
             {
                 _timeLeft -= Time.deltaTime;
-                yield return new WaitForEndOfFrame();
+                return;
             }
             
             _boolSetter.SetBoolToFalse();
             _countdownStarted = false;
+            _updatesController.RemoveUpdateCallback(Countdown);
         }
     }
 }

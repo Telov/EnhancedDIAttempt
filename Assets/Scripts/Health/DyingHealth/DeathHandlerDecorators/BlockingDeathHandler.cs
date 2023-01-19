@@ -4,21 +4,18 @@ namespace EnhancedDIAttempt.Health
 {
     public class BlockingDeathHandler : IDeathHandler
     {
-        public BlockingDeathHandler(IDeathHandler deathHandler, params IBlockable[] blockables)
+        public BlockingDeathHandler(IDeathHandler deathHandler, IBlocker blocker)
         {
             _deathHandler = deathHandler;
-            _blockables = blockables;
+            _blocker = blocker;
         }
 
         private readonly IDeathHandler _deathHandler;
-        private readonly IBlockable[] _blockables;
+        private readonly IBlocker _blocker;
         
         public void Trigger()
         {
-            foreach (var blockable in _blockables)
-            {
-                blockable.Block(this);
-            }
+            _blocker.Block();
 
             _deathHandler.Trigger();
         }

@@ -32,7 +32,6 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.Behaviours
         {
             if (_reloader.Reloaded)
             {
-                Debug.Log(123);
                 _jumper.Jump(_jumpPower);
                 _reloader.Unload();
             }

@@ -35,7 +35,6 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.Behaviours
 
         private void RequestJump(InputAction.CallbackContext ctx)
         {
-            Debug.Log("Jump requested");
             _innerOnWantToJump();
         }
     }
