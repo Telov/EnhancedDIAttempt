@@ -5,20 +5,20 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.Behaviours
         public AttackBehaviour
         (
             IAttackRuler ruler,
-            IDamageDealer damageDealer,
-            IAttackTargetsProvider targetsProvider,
+            IDamager damager,
+            IDamageablesProvider targetsProvider,
             float power
         )
         {
             _ruler = ruler;
-            _damageDealer = damageDealer;
+            _damager = damager;
             _targetsProvider = targetsProvider;
             _power = power;
         }
 
         private readonly IAttackRuler _ruler;
-        private readonly IDamageDealer _damageDealer;
-        private readonly IAttackTargetsProvider _targetsProvider;
+        private readonly IDamager _damager;
+        private readonly IDamageablesProvider _targetsProvider;
         private readonly float _power;
 
         private readonly Context _context = new Context();
@@ -36,7 +36,7 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.Behaviours
 
         private void Attack()
         {
-            _damageDealer.DealDamage(_context,_targetsProvider.GetAttackTargets(), _power);
+            _damager.DealDamage(_context,_targetsProvider.GetAttackTargets(), _power);
         }
     }
 }

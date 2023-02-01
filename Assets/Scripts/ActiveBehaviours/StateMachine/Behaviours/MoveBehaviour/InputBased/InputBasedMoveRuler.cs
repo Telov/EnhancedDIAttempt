@@ -59,12 +59,12 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.Behaviours
 
         private void StartWorking(InputAction.CallbackContext ctx)
         {
-            _updatesController.AddFixedUpdateCallback(OnFixedUpdate);
+            _updatesController.FixedUpdateCallbacks += OnFixedUpdate;
         }
 
         private void StopWorking(InputAction.CallbackContext ctx)
         {
-            _updatesController.RemoveFixedUpdateCallback(OnFixedUpdate);
+            _updatesController.FixedUpdateCallbacks -= OnFixedUpdate;
         }
 
         private void OnFixedUpdate()

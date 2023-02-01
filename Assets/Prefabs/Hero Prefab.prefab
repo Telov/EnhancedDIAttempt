@@ -29,7 +29,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1775608634321319238}
+  m_Father: {fileID: 927333321008688}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4488670251879634745
@@ -77,7 +77,7 @@ PrefabInstance:
       objectReference: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
     - target: {fileID: 1345225191723408632, guid: de6850e8bb37dcd47baa3345347f6ec4, type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1753357137284090645, guid: de6850e8bb37dcd47baa3345347f6ec4, type: 3}
       propertyPath: _leafInstallers.Array.size
@@ -93,7 +93,7 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: b95265f99b6d90e438df1308a89c8bab, type: 2}
     - target: {fileID: 1981079134114434060, guid: de6850e8bb37dcd47baa3345347f6ec4, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2100828242233052798, guid: de6850e8bb37dcd47baa3345347f6ec4, type: 3}
       propertyPath: m_Controller
@@ -161,7 +161,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3731422741062545250, guid: de6850e8bb37dcd47baa3345347f6ec4, type: 3}
       propertyPath: attackPower
-      value: 20
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 5037382123008475223, guid: de6850e8bb37dcd47baa3345347f6ec4, type: 3}
       propertyPath: m_RootOrder
@@ -193,9 +193,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: de6850e8bb37dcd47baa3345347f6ec4, type: 3}
---- !u!4 &1775608634321319238 stripped
+--- !u!4 &927333321008688 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 3015956715069372124, guid: de6850e8bb37dcd47baa3345347f6ec4, type: 3}
+  m_CorrespondingSourceObject: {fileID: 3566188335746557354, guid: de6850e8bb37dcd47baa3345347f6ec4, type: 3}
   m_PrefabInstance: {fileID: 3566549647407137690}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &2966679205045700751 stripped
@@ -228,5 +228,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputController: {fileID: 4488670251879634745}
   runSpeedMultiplier: 1.8
-  jumpPower: 6
+  jumpPower: 10
   jumpCooldown: 0

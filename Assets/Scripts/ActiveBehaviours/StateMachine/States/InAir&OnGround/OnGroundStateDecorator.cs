@@ -48,14 +48,14 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.States
 
         private void StartUpdating()
         {
-            _updatesController.AddUpdateCallback(OnUpdate);
-            _updatesController.AddFixedUpdateCallback(OnFixedUpdate);
+            _updatesController.UpdateCallbacks += OnUpdate;
+            _updatesController.FixedUpdateCallbacks += OnFixedUpdate;
         }
 
         private void StopUpdating()
         {
-            _updatesController.RemoveUpdateCallback(OnUpdate);
-            _updatesController.RemoveFixedUpdateCallback(OnFixedUpdate);
+            _updatesController.UpdateCallbacks -= OnUpdate;
+            _updatesController.FixedUpdateCallbacks -= OnFixedUpdate;
         }
 
         private void OnUpdate()

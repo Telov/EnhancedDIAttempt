@@ -1,8 +1,6 @@
-using EnhancedDIAttempt.Damage;
-
 namespace EnhancedDIAttempt.Health
 {
-    public interface IHealth : IDamageGetter
+    public interface IHealth : IDamageable
     {
         public float CurrentHealth { get; }
         public float MaxHealth { get; }

@@ -6,14 +6,14 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.Behaviours
     public class AttackIfCanAttackRuler : IAttackRuler
     {
         public AttackIfCanAttackRuler(
-            IAttackTargetsProvider attackTargetsProvider,
+            IDamageablesProvider damageablesProvider,
             IUpdatesController updatesController)
         {
-            _attackTargetsProvider = attackTargetsProvider;
+            _damageablesProvider = damageablesProvider;
             _updatesController = updatesController;
         }
         
-        private readonly IAttackTargetsProvider _attackTargetsProvider;
+        private readonly IDamageablesProvider _damageablesProvider;
         private readonly IUpdatesController _updatesController;
         
         public event Action OnWantAttack
@@ -22,13 +22,13 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.Behaviours
             {
                 _innerOnWantAttack += value;
                 _listenersCount++;
-                if (_listenersCount == 1) _updatesController.AddUpdateCallback(OnUpdate);
+                if (_listenersCount == 1) _updatesController.UpdateCallbacks += OnUpdate;
             }
             remove
             {
                 _innerOnWantAttack -= value;
                 _listenersCount--;
-                if (_listenersCount == 0) _updatesController.RemoveUpdateCallback(OnUpdate);
+                if (_listenersCount == 0) _updatesController.UpdateCallbacks -= OnUpdate;
             }
         }
 
@@ -38,7 +38,7 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.Behaviours
 
         private void OnUpdate()
         {
-            if (_attackTargetsProvider.GetAttackTargets().Count != 0) _innerOnWantAttack();
+            if (_damageablesProvider.GetAttackTargets().Count != 0) _innerOnWantAttack();
         }
     }
 }

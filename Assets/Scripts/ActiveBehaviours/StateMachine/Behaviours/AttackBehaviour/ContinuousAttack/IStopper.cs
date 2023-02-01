@@ -2,8 +2,9 @@ using System;
 
 namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.Behaviours
 {
-    public interface IAttackInterrupter
+    public interface IStopper
     {
-        public event Action OnWantToStopAttack;
+        public event Action OnStopped;
+        public void Stop();
     }
 }

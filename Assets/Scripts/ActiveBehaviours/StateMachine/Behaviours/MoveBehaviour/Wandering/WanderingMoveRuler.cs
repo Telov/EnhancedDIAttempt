@@ -27,13 +27,13 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.Behaviours
             {
                 _innerOnWantMove += value;
                 _listenersCount++;
-                if (_listenersCount == 1) _updatesController.AddFixedUpdateCallback(Wander);
+                if (_listenersCount == 1) _updatesController.FixedUpdateCallbacks += Wander;
             }
             remove
             {
                 _innerOnWantMove -= value;
                 _listenersCount--;
-                if (_listenersCount == 0) _updatesController.RemoveFixedUpdateCallback(Wander);
+                if (_listenersCount == 0) _updatesController.FixedUpdateCallbacks -= Wander;
             }
         }
 

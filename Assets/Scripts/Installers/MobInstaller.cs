@@ -26,6 +26,17 @@ namespace EnhancedDIAttempt.Installers
                 }
             );
 
+            // _commonCharacterInstaller.WalkBehaviour.AddPreSetRoutine
+            // (() =>
+            //     {
+            //         _commonCharacterInstaller.MoveRuler.PrimaryValue = () =>
+            //             new WanderingMoveRuler
+            //             (
+            //                 _updatesController,
+            //                 wanderingTimeInOneDirection
+            //             );
+            //     }
+            // );
             _commonCharacterInstaller.MoveRuler.PrimaryValue = () =>
                 new WanderingMoveRuler
                 (

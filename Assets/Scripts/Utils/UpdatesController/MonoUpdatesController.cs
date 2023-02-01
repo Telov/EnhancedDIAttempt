@@ -7,35 +7,22 @@ namespace Telov.Utils
     {
         private readonly UpdatesController _updatesController = new UpdatesController();
         
-        public void AddUpdateCallback(Action action)
+        public event Action UpdateCallbacks
         {
-            _updatesController.AddUpdateCallback(action);
+            add => _updatesController.UpdateCallbacks += value;
+            remove => _updatesController.UpdateCallbacks -= value;
         }
-
-        public void RemoveUpdateCallback(Action action)
+        public event Action FixedUpdateCallbacks
         {
-            _updatesController.RemoveUpdateCallback(action);
+            add => _updatesController.FixedUpdateCallbacks += value;
+            remove => _updatesController.FixedUpdateCallbacks -= value;
         }
-
-        public void AddFixedUpdateCallback(Action action)
+        public event Action LateUpdateCallbacks
         {
-            _updatesController.AddFixedUpdateCallback(action);
+            add => _updatesController.LateUpdateCallbacks += value;
+            remove => _updatesController.LateUpdateCallbacks -= value;
         }
-
-        public void RemoveFixedUpdateCallback(Action action)
-        {
-            _updatesController.RemoveFixedUpdateCallback(action);
-        }
-
-        public void AddLateUpdateCallback(Action action)
-        {
-            _updatesController.AddLateUpdateCallback(action);
-        }
-
-        public void RemoveLateUpdateCallback(Action action)
-        {
-            _updatesController.RemoveLateUpdateCallback(action);
-        }
+        
 
         private void Update()
         {
@@ -51,5 +38,6 @@ namespace Telov.Utils
         {
             _updatesController.LateTick();
         }
+
     }
 }

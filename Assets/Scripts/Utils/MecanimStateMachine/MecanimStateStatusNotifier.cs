@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Telov.Utils
 {
-    public class MecanimStateExitedNotifier : StateMachineBehaviour, IMecanimStateInfoProvider
+    public class MecanimStateStatusNotifier : StateMachineBehaviour, IMecanimStateInfoProvider
     {
         public event Action OnStateExited = () => { };
         public event Action OnStateEntered = () => { };

@@ -23,7 +23,7 @@ namespace EnhancedDIAttempt.Health
         public void Trigger()
         {
             _timeLeft = _duration;
-            _updatesController.AddUpdateCallback(FadeCoroutine);
+            _updatesController.UpdateCallbacks += FadeCoroutine;
         }
 
         private void FadeCoroutine()
@@ -37,7 +37,7 @@ namespace EnhancedDIAttempt.Health
             if (!(_timeLeft > 0f))
             {
                 _deathHandler.Trigger();
-                _updatesController.RemoveUpdateCallback(FadeCoroutine);
+                _updatesController.UpdateCallbacks -= FadeCoroutine;
             }
         }
     }

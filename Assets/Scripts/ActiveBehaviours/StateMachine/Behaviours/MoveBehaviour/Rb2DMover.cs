@@ -13,7 +13,6 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.Behaviours
         
         public void Move(float speedMultiplier, Vector3 direction)
         {
-            Debug.Log("Move tick");
             Vector3 force = direction.normalized * speedMultiplier * 10f;
             _rb.AddForce(force, ForceMode2D.Impulse);
         }

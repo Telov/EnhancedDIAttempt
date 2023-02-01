@@ -1,4 +1,3 @@
-using System.Collections;
 using EnhancedDIAttempt.ActiveBehaviours.StateMachine.Behaviours;
 using Telov.Utils;
 using UnityEngine;
@@ -35,7 +34,7 @@ namespace EnhancedDIAttempt.AnimationInteraction
             if (!_countdownStarted)
             {
                 _countdownStarted = true;
-                _updatesController.AddUpdateCallback(Countdown);
+                _updatesController.UpdateCallbacks += Countdown;
             }
             
             _boolSetter.SetBoolToTrue();
@@ -53,7 +52,7 @@ namespace EnhancedDIAttempt.AnimationInteraction
             
             _boolSetter.SetBoolToFalse();
             _countdownStarted = false;
-            _updatesController.RemoveUpdateCallback(Countdown);
+            _updatesController.UpdateCallbacks -= Countdown;
         }
     }
 }

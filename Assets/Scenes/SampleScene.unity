@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 49361923}
   - component: {fileID: 49361922}
   m_Layer: 3
-  m_Name: Grid
+  m_Name: GroundGrid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9608,9 +9608,9 @@ Transform:
   m_Father: {fileID: 49361923}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &1469695162 stripped
+--- !u!4 &1443080906 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 1775608634321319238, guid: 7627a38f317c23b4d8c3d03196b6d488, type: 3}
+  m_CorrespondingSourceObject: {fileID: 927333321008688, guid: 7627a38f317c23b4d8c3d03196b6d488, type: 3}
   m_PrefabInstance: {fileID: 568979273}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1546892814
@@ -9750,7 +9750,7 @@ MonoBehaviour:
   m_Priority: 10
   m_StandbyUpdate: 2
   m_LookAt: {fileID: 0}
-  m_Follow: {fileID: 1469695162}
+  m_Follow: {fileID: 1443080906}
   m_Lens:
     FieldOfView: 34
     OrthographicSize: 4.32

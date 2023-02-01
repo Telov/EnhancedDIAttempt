@@ -9,35 +9,22 @@ namespace Telov.Utils
         private Action _onFixedUpdate = () => { };
         private Action _onLateUpdate = () => { };
 
-        public void AddUpdateCallback(Action action)
+        public event Action UpdateCallbacks
         {
-            _onUpdate += action;
+            add => _onUpdate += value;
+            remove => _onUpdate -= value;
         }
-
-        public void RemoveUpdateCallback(Action action)
+        public event Action FixedUpdateCallbacks
         {
-            _onUpdate -= action;
+            add => _onFixedUpdate += value;
+            remove => _onFixedUpdate -= value;
         }
-
-        public void AddFixedUpdateCallback(Action action)
+        public event Action LateUpdateCallbacks
         {
-            _onFixedUpdate += action;
+            add => _onLateUpdate += value;
+            remove => _onLateUpdate -= value;
         }
-
-        public void RemoveFixedUpdateCallback(Action action)
-        {
-            _onFixedUpdate -= action;
-        }
-
-        public void AddLateUpdateCallback(Action action)
-        {
-            _onLateUpdate += action;
-        }
-
-        public void RemoveLateUpdateCallback(Action action)
-        {
-            _onLateUpdate -= action;
-        }
+        
 
         public void Tick()
         {
@@ -53,5 +40,6 @@ namespace Telov.Utils
         {
             _onLateUpdate.Invoke();
         }
+
     }
 }

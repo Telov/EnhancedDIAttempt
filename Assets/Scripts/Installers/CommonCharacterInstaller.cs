@@ -5,6 +5,7 @@ using EnhancedDIAttempt.ActiveBehaviours.StateMachine.Behaviours;
 using EnhancedDIAttempt.ActiveBehaviours.StateMachine.Behaviours.ConstantMoveDownBehaviour;
 using EnhancedDIAttempt.ActiveBehaviours.StateMachine.States;
 using EnhancedDIAttempt.AnimationInteraction;
+using EnhancedDIAttempt.AnimationInteraction.SMBehaviours;
 using EnhancedDIAttempt.Health;
 using EnhancedDIAttempt.StateMachine;
 using EnhancedDIAttempt.Utils.ZenjectAdditions;
@@ -63,7 +64,7 @@ namespace EnhancedDIAttempt.Installers
         public readonly DecorationProperty<IBlockable> WalkBehaviourBlock = new();
         public readonly DecorationProperty<IBehaviour> WalkBehaviour = new();
         public readonly DecorationProperty<IAttackRuler> AttackRuler = new();
-        public readonly DecorationProperty<IAttackTargetsProvider> AttackTargetsProvider = new();
+        public readonly DecorationProperty<IDamageablesProvider> AttackTargetsProvider = new();
         public readonly DecorationProperty<IBlockable> AttackBehaviourBlock = new();
         public readonly DecorationProperty<IBehaviour> AttackBehaviour = new();
         public readonly DecorationProperty<IBehaviour> OnGroundStateBehaviours = new();
@@ -162,40 +163,41 @@ namespace EnhancedDIAttempt.Installers
                     ActorInfoProvider.FinalValue
                 );
 
-            var attackInterrupter = new BaseAttackInterrupter();
+            var attackStopper = new SimpleStopper();
 
             AttackTargetsProvider.PrimaryValue = () =>
-                new FilteringAttackTargetsProviderDecorator
+                new FilteringDamageablesProviderDecorator
                 (
-                    new OverlappingColliderAttackTargetsProvider(attackCollider),
+                    new OverlappingColliderDamageablesProvider(attackCollider),
                     new[] { Health.FinalValue }
                 );
-
+            
             AttackBehaviour.PrimaryValue = () =>
                 new BlockableBehaviourDecorator
                 (
                     new AttackBehaviour
                     (
                         AttackRuler.FinalValue,
-                        new CoolingDownDamageDealerDecorator
+                        new CoolingDownDamagerDecorator
                         (
-                            new DependantOnAnimationContinuousDamageDealerDecorator
+                            new DependantOnAnimationContinuousDamagerDecorator
                             (
-                                new BlockingContinuousDamageDealerDecorator
+                                new BlockingContinuousDamagerDecorator
                                 (
-                                    new ContinuousDamageDealerDecorator
+                                    new ContinuousDamagerDecorator
                                     (
-                                        new SimpleDamageDealer(),
+                                        new SimpleDamager(),
                                         _updatesController,
                                         AttackTargetsProvider.FinalValue,
-                                        attackInterrupter
+                                        attackStopper
                                     ),
                                     walkBlocker
                                 ),
-                                attackInterrupter,
-                                animEventsNotifier,
                                 new AnimatorBoolSetter(animator, Animator.StringToHash(animatorAttackingBoolName)),
-                                maxTimeBetweenClickAndAttackStart
+                                animEventsNotifier,
+                                animator.GetBehaviour<AttackMecanimState>(),
+                                maxTimeBetweenClickAndAttackStart,
+                                attackStopper
                             ),
                             new SimpleReloader(attackCooldown)
                         ),

@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.Behaviours
 {
     public class SimpleBlockable : IBlockable
     {
-        public event Action OnBlocked;
-        public event Action OnUnblocked;
+        public event Action OnBlocked = () => { };
+        public event Action OnUnblocked = () => { };
 
         private readonly List<object> _blockers = new();
         public void Block(object blocker)

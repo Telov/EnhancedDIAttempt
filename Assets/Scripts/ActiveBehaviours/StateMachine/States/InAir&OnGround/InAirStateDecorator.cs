@@ -42,12 +42,12 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.States
         
         private void StartUpdating()
         {
-            _updatesController.AddUpdateCallback(OnUpdate);
+            _updatesController.UpdateCallbacks += OnUpdate;
         }
     
         private void StopUpdating()
         {
-            _updatesController.RemoveUpdateCallback(OnUpdate);
+            _updatesController.UpdateCallbacks -= OnUpdate;
         }
     
         private void OnUpdate()

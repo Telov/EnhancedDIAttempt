@@ -31,12 +31,12 @@ namespace EnhancedDIAttempt.ActiveBehaviours.StateMachine.Behaviours.ConstantMov
 
         public void Activate(EnhancedDIAttempt.StateMachine.StateMachine.CallbackContext callbackContext)
         {
-            _updatesController.AddFixedUpdateCallback(MoveDown);
+            _updatesController.FixedUpdateCallbacks += MoveDown;
         }
 
         public void Deactivate()
         {
-            _updatesController.RemoveFixedUpdateCallback(MoveDown);
+            _updatesController.FixedUpdateCallbacks -= MoveDown;
             _multiplier = 1f;
         }
 
