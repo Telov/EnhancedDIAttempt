@@ -41,7 +41,7 @@ PrefabInstance:
       objectReference: {fileID: 22100000, guid: b810f2280bb2a6b4cbf996716e6e3d55, type: 2}
     - target: {fileID: 1981079134114434060, guid: de6850e8bb37dcd47baa3345347f6ec4, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2100828242233052798, guid: de6850e8bb37dcd47baa3345347f6ec4, type: 3}
       propertyPath: m_Controller
@@ -101,15 +101,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3717594786859564648, guid: de6850e8bb37dcd47baa3345347f6ec4, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3730423112317815048, guid: de6850e8bb37dcd47baa3345347f6ec4, type: 3}
       propertyPath: m_RootOrder
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3731422741062545250, guid: de6850e8bb37dcd47baa3345347f6ec4, type: 3}
-      propertyPath: attackPower
-      value: 15
+      propertyPath: maxHealth
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3731422741062545250, guid: de6850e8bb37dcd47baa3345347f6ec4, type: 3}
+      propertyPath: startHealth
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5037382123008475223, guid: de6850e8bb37dcd47baa3345347f6ec4, type: 3}
       propertyPath: m_RootOrder

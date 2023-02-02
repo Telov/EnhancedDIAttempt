@@ -8,12 +8,12 @@ namespace Telov.Utils
     {
         private readonly List<object> _list = new List<object>();
 
-        public void Subscribe(object newSubscriber)
+        public void SubscribeAsListener(object newSubscriber)
         {
             _list.Add(newSubscriber);
         }
 
-        public void Unsubscribe(object unsubscriber)
+        public void UnsubscribeAsListener(object unsubscriber)
         {
             _list.Remove(unsubscriber);
         }

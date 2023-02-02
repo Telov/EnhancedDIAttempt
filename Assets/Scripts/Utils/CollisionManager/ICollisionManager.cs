@@ -5,9 +5,9 @@ namespace Telov.Utils
 {
     public interface ICollisionManager
     {
-        public void Subscribe(object newSubscriber);
+        public void SubscribeAsListener(object newSubscriber);
         
-        public void Unsubscribe(object unsubscriber);
+        public void UnsubscribeAsListener(object unsubscriber);
 
         public List<T> GetSubscribers<T>();
 

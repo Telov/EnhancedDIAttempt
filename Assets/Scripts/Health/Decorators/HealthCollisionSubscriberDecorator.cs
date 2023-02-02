@@ -17,13 +17,13 @@ namespace EnhancedDIAttempt.Health
         public void Activate()
         {
             _health.Activate();
-            _collisionManager.Subscribe(this);
+            _collisionManager.SubscribeAsListener(this);
         }
 
         public void Deactivate()
         {
             _health.Deactivate();
-            _collisionManager.Unsubscribe(this);
+            _collisionManager.UnsubscribeAsListener(this);
         }
 
         public void GetDamage(float damageAmount) => _health.GetDamage(damageAmount);

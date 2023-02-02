@@ -280,7 +280,7 @@ MonoBehaviour:
   actorTransform: {fileID: 3566188335746557354}
   actorCollider: {fileID: 7534747057561890741}
   attackCooldown: 1.1
-  attackPower: 10
+  attackPower: 1
   attackCollider: {fileID: 6702243595028506605}
   animatorAttackingBoolName: Attacking
   maxTimeBetweenClickAndAttackStart: 0.15
@@ -296,8 +296,8 @@ MonoBehaviour:
   downPowerRiseRate: 1.14
   moveDownSpeedLimit: -10
   spriteRenderer: {fileID: 222751916844969862}
-  startHealth: 100
-  maxHealth: 100
+  startHealth: 3
+  maxHealth: 3
   fadingOnDeathDuration: 3
   animatorDeadBoolName: Dead
   animatorHurtTriggerName: BeingHurt
